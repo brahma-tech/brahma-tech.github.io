@@ -1,56 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BrahmaTech</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <!-- Floating particles background -->
-  <div id="particles"></div>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="/assets/logo_.png" alt="Lotus Logo">
+      <span>BrahmaTech</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
 
-  <header>
-    <img src="/assets/logo_.png" alt="BrahmaTech Lotus Logo" class="lotus" />
-    <h1>BrahmaTech</h1>
-    <p class="slogan">Awaken. Build. Transcend.</p>
-  </header>
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <h1>Welcome to BrahmaTech</h1>
+    <p>Experience serene technology with elegance and clarity.</p>
+  </section>
 
-  <hr class="floral-divider" />
+  <!-- Features Section -->
+  <section id="features" class="cards">
+    <div class="card slide-in-left">
+      <h2>Mindful Design</h2>
+      <p>UI inspired by tranquility and clarity.</p>
+    </div>
+    <div class="card slide-in-right">
+      <h2>Smart Tech</h2>
+      <p>Modern tech solutions made elegant and peaceful.</p>
+    </div>
+    <div class="card slide-in-left">
+      <h2>Community First</h2>
+      <p>Built to serve with mindfulness and harmony.</p>
+    </div>
+  </section>
 
-  <section class="container">
+  <!-- About Section -->
+  <section id="about" class="about">
     <h2>Our Mission</h2>
-    <p>We empower minds through technology, creativity, and consciousness.</p>
+    <p>
+      BrahmaTech bridges the gap between technology and inner peace. We're not just a tech firm, we're a movement for mindful innovation.
+    </p>
   </section>
 
-  <hr class="floral-divider" />
+  <!-- Back to Top -->
+  <button id="backToTop">⬆</button>
 
-  <section class="container">
-    <h2>Projects</h2>
-    <p>Explore cutting-edge creations from our digital sanctuary.</p>
-  </section>
-
-  <hr class="floral-divider" />
-
+  <!-- Footer -->
   <footer>
-    <p>© 2025 BrahmaTech. All rights reserved.</p>
+    <svg viewBox="0 0 120 28" preserveAspectRatio="none">
+      <path d="M0,10 C40,30 80,0 120,20 L120,30 L0,30 Z" fill="#fcd4e2"></path>
+    </svg>
+    <div class="footer-content">
+      <p>&copy; 2025 BrahmaTech. All rights reserved.</p>
+    </div>
   </footer>
-
-  <!-- Particles.js script -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  <script>
-    particlesJS("particles", {
-      "particles": {
-        "number": { "value": 20 },
-        "color": { "value": "#ffbbd4" },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.3 },
-        "size": { "value": 10 },
-        "move": { "enable": true, "speed": 1 }
-      },
-      "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": false } } },
-      "retina_detect": true
-    });
-  </script>
 </body>
 </html>
