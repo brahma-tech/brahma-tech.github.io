@@ -3,54 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BrahmaTech</title>
-  <link rel="stylesheet" href="terms.css">
+  <title>Terms of Service | BrahmaTech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to bottom, #ffeaf0, #fcd2e8);
+      color: #4c3a3a;
+      display: flex;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 25px;
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(20px);
+      animation: fadeIn 1.2s ease-in;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      color: #e91e63;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #d81b60;
+      margin-top: 30px;
+      font-size: 1.2rem;
+    }
+
+    p {
+      line-height: 1.8;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .logo img {
+      max-height: 80px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Floating particles background -->
-  <div id="particles"></div>
+  <div class="container">
+    <div class="logo">
+      <img src="logo.jpg" alt="BrahmaTech Logo">
+    </div>
+    <h1>Terms of Service</h1>
 
-  <header>
-    <img src="/assets/logo.jpg" alt="BrahmaTech Lotus Logo" class="lotus" />
-    <h1>BrahmaTech</h1>
-    <p class="slogan">Awaken. Build. Transcend.</p>
-  </header>
+    <h2>1. Acceptance of Terms</h2>
+    <p>By accessing or using BrahmaTech’s services, you agree to be bound by these terms and conditions.</p>
 
-  <hr class="floral-divider" />
+    <h2>2. Modifications</h2>
+    <p>We reserve the right to update these terms at any time. Continued use of our services indicates your acceptance of any changes.</p>
 
-  <section class="container">
-    <h2>Our Mission</h2>
-    <p>We empower minds through technology, creativity, and consciousness.</p>
-  </section>
+    <h2>3. User Responsibilities</h2>
+    <p>Users must not misuse our platform. You agree not to engage in illegal or abusive conduct while using our services.</p>
 
-  <hr class="floral-divider" />
+    <h2>4. Termination</h2>
+    <p>We may suspend or terminate access if you violate any of these terms or act in a way that harms the platform.</p>
 
-  <section class="container">
-    <h2>Projects</h2>
-    <p>Explore cutting-edge creations from our digital sanctuary.</p>
-  </section>
+    <h2>5. Limitation of Liability</h2>
+    <p>We are not liable for any damages arising from your use of the service. Use it at your own risk.</p>
 
-  <hr class="floral-divider" />
-
-  <footer>
-    <p>© 2025 BrahmaTech. All rights reserved.</p>
-  </footer>
-
-  <!-- Particles.js script -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  <script>
-    particlesJS("particles", {
-      "particles": {
-        "number": { "value": 20 },
-        "color": { "value": "#ffbbd4" },
-        "shape": { "type": "circle" },
-        "opacity": { "value": 0.3 },
-        "size": { "value": 10 },
-        "move": { "enable": true, "speed": 1 }
-      },
-      "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": false } } },
-      "retina_detect": true
-    });
-  </script>
+    <h2>6. Contact</h2>
+    <p>If you have any questions, contact us at: support@brahmatech.ai</p>
+  </div>
 </body>
 </html>
