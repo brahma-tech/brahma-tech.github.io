@@ -1,159 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BrahmaTech | Terms of Service</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    /* Base Styling */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to bottom right, #ffeef4, #ffd6ea);
-      color: #3a3a3a;
-      overflow-x: hidden;
-    }
-
-    /* Header Section */
-    header {
-      text-align: center;
-      padding: 60px 20px 30px;
-      background: linear-gradient(to bottom, #fff3f9, #ffd6ea);
-    }
-
-    header img {
-      width: 140px;
-      margin-bottom: 20px;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    header h1 {
-      font-size: 2.5rem;
-      color: #cc3366;
-      margin: 0;
-      text-shadow: 0 0 8px rgba(255, 182, 193, 0.6);
-    }
-
-    header p {
-      font-size: 1.1rem;
-      color: #cc3366;
-      margin-top: 10px;
-    }
-
-    /* Main Container */
-    .container {
-      max-width: 850px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 40px;
-      border-radius: 25px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(255, 182, 193, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      margin-bottom: 80px;
-    }
-
-    h2 {
-      margin-top: 30px;
-      font-weight: 600;
-      background: linear-gradient(90deg, #cc3366, #ff99bb);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    a {
-      color: #cc3366;
-      text-decoration: underline;
-    }
-
-    hr.floral-divider {
-      border: none;
-      height: 1px;
-      background: linear-gradient(to right, #ffd6ea, #ffffff, #ffd6ea);
-      margin: 40px 0;
-    }
-
-    footer {
-      text-align: center;
-      padding: 30px;
-      font-size: 0.9rem;
-      color: #cc3366;
-    }
-
-    /* Optional floating background petals (CSS only) */
-    .floating-petal {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      background: url('BrahmaTech.jpg') no-repeat center/contain;
-      opacity: 0.07;
-      animation: drift 20s linear infinite;
-    }
-
-    .floating-petal:nth-child(1) { top: 100px; left: 10%; animation-delay: 0s; }
-    .floating-petal:nth-child(2) { top: 200px; left: 60%; animation-delay: 6s; }
-    .floating-petal:nth-child(3) { top: 300px; left: 80%; animation-delay: 12s; }
-
-    @keyframes drift {
-      0% { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(-800px) rotate(360deg); }
-    }
-
-    @media (max-width: 600px) {
-      header h1 { font-size: 1.8rem; }
-      .container { padding: 25px; margin: 20px; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BrahmaTech</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Floating petals -->
-  <div class="floating-petal"></div>
-  <div class="floating-petal"></div>
-  <div class="floating-petal"></div>
+  <!-- Floating particles background -->
+  <div id="particles"></div>
 
-  <!-- Header with Logo and Slogan -->
   <header>
-    <img src="/assets/logo.jpg" alt="BrahmaTech Logo" />
-    <h1>BrahmaTech – Terms of Service</h1>
-    <p>Empowering calm, mindful tech experiences</p>
+    <img src="logo.jpg" alt="BrahmaTech Lotus Logo" class="lotus" />
+    <h1>BrahmaTech</h1>
+    <p class="slogan">Awaken. Build. Transcend.</p>
   </header>
 
-  <!-- Main Content -->
-  <div class="container">
-    <p><strong>Last Updated:</strong> July 22, 2025</p>
+  <hr class="floral-divider" />
 
-    <p>Welcome to BrahmaTech! These Terms of Service ("Terms") govern your use of our Discord bot ("the Service"). By using the Service, you agree to be bound by these Terms.</p>
+  <section class="container">
+    <h2>Our Mission</h2>
+    <p>We empower minds through technology, creativity, and consciousness.</p>
+  </section>
 
-    <hr class="floral-divider" />
+  <hr class="floral-divider" />
 
-    <h2>1. Usage</h2>
-    <p>You must follow all applicable laws and Discord’s Terms of Service when using our bot. Abusive or malicious usage may result in restrictions or bans.</p>
+  <section class="container">
+    <h2>Projects</h2>
+    <p>Explore cutting-edge creations from our digital sanctuary.</p>
+  </section>
 
-    <h2>2. Data We Collect</h2>
-    <p>We collect basic information (such as Discord IDs, message logs for moderation, XP statistics, or voice channel usage) to enable key bot features. We do not collect or sell any personal or private data.</p>
+  <hr class="floral-divider" />
 
-    <h2>3. Bot Availability</h2>
-    <p>BrahmaTech reserves the right to update, pause, or discontinue the Service at any time without notice. We strive for stability but cannot guarantee uninterrupted service.</p>
-
-    <h2>4. Limitation of Liability</h2>
-    <p>We are not liable for any damages or losses arising from your use of the bot. Use is at your own risk.</p>
-
-    <h2>5. Changes to Terms</h2>
-    <p>We may update these Terms as necessary. Continued use after changes means you accept the new Terms.</p>
-
-    <p>Have questions? Reach out to us at <a href="mailto:youremail@example.com">brahmatech555@gmail.com</a></p>
-  </div>
-
-  <!-- Footer -->
   <footer>
-    © 2025 BrahmaTech. All rights reserved.
+    <p>© 2025 BrahmaTech. All rights reserved.</p>
   </footer>
+
+  <!-- Particles.js script -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles", {
+      "particles": {
+        "number": { "value": 20 },
+        "color": { "value": "#ffbbd4" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.3 },
+        "size": { "value": 10 },
+        "move": { "enable": true, "speed": 1 }
+      },
+      "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": false } } },
+      "retina_detect": true
+    });
+  </script>
 </body>
 </html>
