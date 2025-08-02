@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BrahmaTech Bot Login</title>
+<style>
+  body {
+    background: #0d0d0d;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    padding-top: 100px;
+  }
+  #login-btn {
+    background: #5865F2;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Welcome to BrahmaTech Bot Dashboard</h1>
+<p>Please log in with Discord to continue</p>
+
+<button id="login-btn">Login with Discord</button>
+
+<script>
+const clientId = "1390039097992810606"; // Your bot's client ID
+const redirectUri = encodeURIComponent(window.location.origin + "/dashboard/dashboard.html");
+const scope = "identify";
+
+document.getElementById("login-btn").addEventListener("click", () => {
+  window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}`;
+});
+</script>
+
+</body>
+</html>
