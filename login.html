@@ -2,41 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BrahmaTech Bot Login</title>
+<title>Login | BrahmaTech Bot Dashboard</title>
 <style>
   body {
-    background: #0d0d0d;
-    color: white;
     font-family: 'Segoe UI', sans-serif;
+    background: #f8f8f8;
+    margin: 0;
     text-align: center;
     padding-top: 100px;
+    color: #333;
   }
-  #login-btn {
-    background: #5865F2;
+  h1 {
+    color: #ff4da6;
+    font-size: 2.5rem;
+  }
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+  }
+  .login-btn {
+    background: #ff4da6;
     color: white;
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 14px 28px;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
+    font-size: 1rem;
     cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  .login-btn:hover {
+    background: #e04395;
   }
 </style>
 </head>
 <body>
 
 <h1>Welcome to BrahmaTech Bot Dashboard</h1>
-<p>Please log in with Discord to continue</p>
-
-<button id="login-btn">Login with Discord</button>
+<p>Sign in with Discord to manage your servers</p>
+<button class="login-btn" onclick="login()">Login with Discord</button>
 
 <script>
-const clientId = "1390039097992810606"; // Your bot's client ID
-const redirectUri = encodeURIComponent("https://brahma-tech.github.io/dashboard.html");
-const scope = "identify";
-
-document.getElementById("login-btn").addEventListener("click", () => {
-  window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}`;
-});
+  function login() {
+    const clientId = "1390039097992810606"; // Your bot's client ID
+    const redirectUri = encodeURIComponent("https://discord.com/oauth2/authorize?client_id=1390039097992810606&response_type=code&redirect_uri=https%3A%2F%2Fbrahma-tech.github.io%2Fdashboard.html&scope=guilds+identify");
+    const scope = "identify guilds";
+    window.location.href = 
+      `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+  }
 </script>
 
 </body>
