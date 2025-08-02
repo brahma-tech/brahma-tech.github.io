@@ -1,70 +1,98 @@
 {
   "🛡️ Moderation": [
-    {
-      "name": "/ban",
-      "description": "Ban a user from the server.",
-      "usage": "/ban @user [reason]"
-    },
-    {
-      "name": "/kick",
-      "description": "Kick a user from the server.",
-      "usage": "/kick @user"
-    },
-    {
-      "name": "/warn",
-      "description": "Warn a user for inappropriate behavior.",
-      "usage": "/warn @user [reason]"
-    }
+    { "name": "/ban", "description": "Ban a user from the server.", "usage": "/ban @user [reason]" },
+    { "name": "/unban", "description": "Unban a previously banned user.", "usage": "/unban @user" },
+    { "name": "/kick", "description": "Kick a user from the server.", "usage": "/kick @user" },
+    { "name": "/mute", "description": "Mute a user in the server.", "usage": "/mute @user" },
+    { "name": "/tempmute", "description": "Temporarily mute a user for a duration.", "usage": "/tempmute @user <time>" },
+    { "name": "/tempmute-cancel", "description": "Cancel an active tempmute.", "usage": "/tempmute-cancel @user" },
+    { "name": "/tempmute-check", "description": "Check remaining time for a tempmute.", "usage": "/tempmute-check @user" },
+    { "name": "/unmute", "description": "Unmute a muted user.", "usage": "/unmute @user" },
+    { "name": "/warn", "description": "Warn a user for inappropriate behavior.", "usage": "/warn @user [reason]" },
+    { "name": "/warnings", "description": "List warnings for a user.", "usage": "/warnings @user" },
+    { "name": "/delwarn", "description": "Remove a specific warning from a user.", "usage": "/delwarn @user" },
+    { "name": "/delwarnid", "description": "Remove a warning by ID.", "usage": "/delwarnid <id>" },
+    { "name": "/clearwarns", "description": "Clear all warnings for a user.", "usage": "/clearwarns @user" },
+    { "name": "/clear", "description": "Delete a number of recent messages.", "usage": "/clear <amount>" }
   ],
-  "🎉 Fun": [
-    {
-      "name": "/meme",
-      "description": "Fetch a random meme from the internet.",
-      "usage": "/meme"
-    },
-    {
-      "name": "/joke",
-      "description": "Tells a random programming joke.",
-      "usage": "/joke"
-    },
-    {
-      "name": "/8ball",
-      "description": "Ask the magic 8 ball anything!",
-      "usage": "/8ball Will I be rich?"
-    }
+  "🎉 Giveaways": [
+    { "name": "/startgiveaway", "description": "Start a giveaway in a channel.", "usage": "/startgiveaway <time> <prize>" },
+    { "name": "/endgiveaway", "description": "End a giveaway early.", "usage": "/endgiveaway <message_id>" },
+    { "name": "/rerollgiveaway", "description": "Reroll the winner of a giveaway.", "usage": "/rerollgiveaway <message_id>" },
+    { "name": "/editgiveaway", "description": "Edit an active giveaway.", "usage": "/editgiveaway <message_id>" },
+    { "name": "/archivegiveaway", "description": "Archive giveaway details.", "usage": "/archivegiveaway <message_id>" },
+    { "name": "/deletegiveaway", "description": "Delete a giveaway entry.", "usage": "/deletegiveaway <message_id>" },
+    { "name": "/giveawayinfo", "description": "Show details about a giveaway.", "usage": "/giveawayinfo <message_id>" }
   ],
-  "🔧 Utility": [
-    {
-      "name": "/ping",
-      "description": "Check the bot's latency.",
-      "usage": "/ping"
-    },
-    {
-      "name": "/userinfo",
-      "description": "Shows information about a user.",
-      "usage": "/userinfo @username"
-    },
-    {
-      "name": "/serverinfo",
-      "description": "Shows details about this server.",
-      "usage": "/serverinfo"
-    }
+  "📌 Glue Stick": [
+    { "name": "/glue", "description": "Pin a message in a sticky style.", "usage": "/glue <message>" },
+    { "name": "/gluepara", "description": "Pin a paragraph of text in sticky style.", "usage": "/gluepara <text>" },
+    { "name": "/glueembed", "description": "Pin an embed in sticky style.", "usage": "/glueembed <title> <description>" },
+    { "name": "/editglue", "description": "Edit an existing glue message.", "usage": "/editglue <id>" },
+    { "name": "/unglue", "description": "Remove a pinned glue message.", "usage": "/unglue <id>" },
+    { "name": "/listglues", "description": "List all pinned glue messages.", "usage": "/listglues" },
+    { "name": "/clearallglues", "description": "Clear all glues from the server.", "usage": "/clearallglues" }
   ],
-  "🎵 Music": [
-    {
-      "name": "/play",
-      "description": "Play a song from a URL or search.",
-      "usage": "/play song name or URL"
-    },
-    {
-      "name": "/pause",
-      "description": "Pause the current song.",
-      "usage": "/pause"
-    },
-    {
-      "name": "/skip",
-      "description": "Skip the current song.",
-      "usage": "/skip"
-    }
+  "🏆 Leveling": [
+    { "name": "/rank", "description": "Show your current level and XP.", "usage": "/rank" },
+    { "name": "/leaderboard", "description": "Show the XP leaderboard.", "usage": "/leaderboard" },
+    { "name": "/daily", "description": "Claim your daily XP reward.", "usage": "/daily" },
+    { "name": "/vcstats", "description": "Show your voice channel activity stats.", "usage": "/vcstats" },
+    { "name": "/profile", "description": "Show your full leveling profile.", "usage": "/profile" },
+    { "name": "/setlevelrole", "description": "Set a role reward for reaching a level.", "usage": "/setlevelrole <level> @role" },
+    { "name": "/setlevelbg", "description": "Set your leveling profile background.", "usage": "/setlevelbg <image_url>" },
+    { "name": "/setlevelupmsg", "description": "Set the level-up message style.", "usage": "/setlevelupmsg <message>" }
+  ],
+  "🔗 Anti-Link": [
+    { "name": "/allowlinks", "description": "Allow links to be sent in the server.", "usage": "/allowlinks" },
+    { "name": "/disablelinks", "description": "Disable all links in the server.", "usage": "/disablelinks" },
+    { "name": "/disablelinkschannel", "description": "Disable links in a specific channel.", "usage": "/disablelinkschannel #channel" },
+    { "name": "/enablelinkschannel", "description": "Enable links in a specific channel.", "usage": "/enablelinkschannel #channel" },
+    { "name": "/viewantilinkconfig", "description": "View anti-link configuration.", "usage": "/viewantilinkconfig" }
+  ],
+  "📨 Modmail": [
+    { "name": "/setmodmail", "description": "Set the modmail channel.", "usage": "/setmodmail #channel" },
+    { "name": "/closemail", "description": "Close a modmail thread.", "usage": "/closemail" }
+  ],
+  "🎯 Invites": [
+    { "name": "/invites", "description": "Check your invite count.", "usage": "/invites" },
+    { "name": "/whoinvited", "description": "Find out who invited a user.", "usage": "/whoinvited @user" },
+    { "name": "/setinvitelog", "description": "Set the invite log channel.", "usage": "/setinvitelog #channel" }
+  ],
+  "📚 Study": [
+    { "name": "/study", "description": "Start a study session.", "usage": "/study" },
+    { "name": "/studylog", "description": "Log your study session.", "usage": "/studylog" },
+    { "name": "/setstudyrank", "description": "Set your study rank image.", "usage": "/setstudyrank <image_url>" },
+    { "name": "/create_pomodoro", "description": "Create a pomodoro timer.", "usage": "/create_pomodoro <focus> <break>" }
+  ],
+  "🎟️ Tickets": [
+    { "name": "/setticket", "description": "Configure the ticket system.", "usage": "/setticket" },
+    { "name": "/ticketpanel", "description": "Post the ticket panel.", "usage": "/ticketpanel" },
+    { "name": "/viewticketconfig", "description": "View ticket configuration.", "usage": "/viewticketconfig" },
+    { "name": "/delete_ticket", "description": "Delete a ticket.", "usage": "/delete_ticket" },
+    { "name": "/reopenticket", "description": "Reopen a closed ticket.", "usage": "/reopenticket" }
+  ],
+  "📊 Polls": [
+    { "name": "/poll", "description": "Create a new poll.", "usage": "/poll <question>" },
+    { "name": "/endpoll", "description": "End a poll early.", "usage": "/endpoll <message_id>" },
+    { "name": "/pollresults", "description": "Show poll results.", "usage": "/pollresults <message_id>" }
+  ],
+  "🤖 AI": [
+    { "name": "/humanoid", "description": "Enable or disable AI humanoid mode in a channel.", "usage": "/humanoid <on|off>" },
+    { "name": "/humanoidmodel", "description": "Change AI humanoid model.", "usage": "/humanoidmodel <model_name>" }
+  ],
+  "🖥️ Cam/SS Monitor": [
+    { "name": "/camss_set_channel", "description": "Set the monitoring channel.", "usage": "/camss_set_channel #channel" },
+    { "name": "/camss_set_time", "description": "Set the monitoring time limit.", "usage": "/camss_set_time <minutes>" },
+    { "name": "/set_cam_admin_role", "description": "Set the cam/SS admin role.", "usage": "/set_cam_admin_role @role" }
+  ],
+  "⚙️ Utility": [
+    { "name": "/ping", "description": "Check the bot's latency.", "usage": "/ping" },
+    { "name": "/help", "description": "Show the help menu.", "usage": "/help" },
+    { "name": "/invite", "description": "Get the bot's invite link.", "usage": "/invite" },
+    { "name": "/owner", "description": "Show the bot owner's info.", "usage": "/owner" },
+    { "name": "/support", "description": "Get the bot support server link.", "usage": "/support" },
+    { "name": "/timer", "description": "Set a timer.", "usage": "/timer <time>" },
+    { "name": "/create_ui", "description": "Create a UI menu.", "usage": "/create_ui" }
   ]
 }
