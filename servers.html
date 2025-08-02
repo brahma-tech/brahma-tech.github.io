@@ -81,7 +81,7 @@
           <div class="server-name">${guild.name}</div>
         `;
         card.onclick = () => {
-          localStorage.setItem("selectedGuild", guild.id);
+          localStorage.setItem("selectedGuild", JSON.stringify(guild));
           localStorage.setItem("accessToken", token);
           window.location.href = "dashboard.html";
         };
