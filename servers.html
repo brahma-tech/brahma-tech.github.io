@@ -55,50 +55,52 @@
 <div class="server-grid" id="serverGrid">Loading servers...</div>
 
 <script>
-const token = localStorage.getItem("accessToken");
+function loadServers() {
+  const params = new URLSearchParams(window.location.search);
+  const encodedData = params.get("data");
 
-if (!token) {
-  document.getElementById("serverGrid").innerHTML =
-    "<p style='color:red'>No token found. Please log in again.</p>";
-} else {
-  fetch("/api/bot-guilds", {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => res.json())
-    .then((guilds) => {
-      const grid = document.getElementById("serverGrid");
-      grid.innerHTML = "";
+  if (!encodedData) {
+    document.getElementById("serverGrid").innerHTML =
+      "<p style='color:red'>No data found. Please log in again.</p>";
+    return;
+  }
 
-      if (!guilds.length) {
-        grid.innerHTML =
-          "<p style='color:gray'>No servers found where you and BrahmaTech Bot are both present.</p>";
-        return;
-      }
+  try {
+    const mutualServers = JSON.parse(atob(encodedData));
+    const grid = document.getElementById("serverGrid");
+    grid.innerHTML = "";
 
-      guilds.forEach((guild) => {
-        const iconURL = guild.icon
-          ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
-          : "https://cdn.discordapp.com/embed/avatars/0.png";
+    if (!mutualServers.length) {
+      grid.innerHTML =
+        "<p style='color:gray'>No servers found where you and BrahmaTech Bot are both present.</p>";
+      return;
+    }
 
-        const card = document.createElement("div");
-        card.className = "server-card";
-        card.innerHTML = `
-          <img src="${iconURL}" alt="server icon">
-          <div class="server-name">${guild.name}</div>
-        `;
-        card.onclick = () => {
-          localStorage.setItem("selectedGuild", JSON.stringify(guild));
-          window.location.href = "dashboard.html";
-        };
-        grid.appendChild(card);
-      });
-    })
-    .catch(() => {
-      document.getElementById("serverGrid").innerHTML =
-        "<p style='color:red'>Failed to load servers.</p>";
+    mutualServers.forEach((guild) => {
+      const iconURL = guild.icon
+        ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
+        : "https://cdn.discordapp.com/embed/avatars/0.png";
+
+      const card = document.createElement("div");
+      card.className = "server-card";
+      card.innerHTML = `
+        <img src="${iconURL}" alt="server icon">
+        <div class="server-name">${guild.name}</div>
+      `;
+      card.onclick = () => {
+        localStorage.setItem("selectedGuild", JSON.stringify(guild));
+        window.location.href = "dashboard.html";
+      };
+      grid.appendChild(card);
     });
+  } catch (err) {
+    console.error(err);
+    document.getElementById("serverGrid").innerHTML =
+      "<p style='color:red'>Failed to load servers.</p>";
+  }
 }
 
+loadServers();
 </script>
 
 </body>
