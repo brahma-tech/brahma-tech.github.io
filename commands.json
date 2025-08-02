@@ -1,0 +1,70 @@
+{
+  "🛡️ Moderation": [
+    {
+      "name": "/ban",
+      "description": "Ban a user from the server.",
+      "usage": "/ban @user [reason]"
+    },
+    {
+      "name": "/kick",
+      "description": "Kick a user from the server.",
+      "usage": "/kick @user"
+    },
+    {
+      "name": "/warn",
+      "description": "Warn a user for inappropriate behavior.",
+      "usage": "/warn @user [reason]"
+    }
+  ],
+  "🎉 Fun": [
+    {
+      "name": "/meme",
+      "description": "Fetch a random meme from the internet.",
+      "usage": "/meme"
+    },
+    {
+      "name": "/joke",
+      "description": "Tells a random programming joke.",
+      "usage": "/joke"
+    },
+    {
+      "name": "/8ball",
+      "description": "Ask the magic 8 ball anything!",
+      "usage": "/8ball Will I be rich?"
+    }
+  ],
+  "🔧 Utility": [
+    {
+      "name": "/ping",
+      "description": "Check the bot's latency.",
+      "usage": "/ping"
+    },
+    {
+      "name": "/userinfo",
+      "description": "Shows information about a user.",
+      "usage": "/userinfo @username"
+    },
+    {
+      "name": "/serverinfo",
+      "description": "Shows details about this server.",
+      "usage": "/serverinfo"
+    }
+  ],
+  "🎵 Music": [
+    {
+      "name": "/play",
+      "description": "Play a song from a URL or search.",
+      "usage": "/play song name or URL"
+    },
+    {
+      "name": "/pause",
+      "description": "Pause the current song.",
+      "usage": "/pause"
+    },
+    {
+      "name": "/skip",
+      "description": "Skip the current song.",
+      "usage": "/skip"
+    }
+  ]
+}
