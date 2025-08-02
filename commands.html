@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bot Commands | BrahmaTech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="/assets/logo_.png">
+  <style>
+    :root {
+      --main-color: #ffd6ea;
+      --accent-color: #ff99bb;
+      --bg-gradient: linear-gradient(135deg, #fff0f5, #ffe4f0);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-gradient);
+      padding-bottom: 100px;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+
+    nav img {
+      width: 40px;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #e91e63;
+    }
+
+    .commands-section {
+      max-width: 900px;
+      margin: 100px auto 50px;
+      padding: 20px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(255, 182, 193, 0.3);
+    }
+
+    .commands-section h1 {
+      font-family: 'Parisienne', cursive;
+      text-align: center;
+      font-size: 3em;
+      color: #cc3366;
+      margin-bottom: 30px;
+    }
+
+    .search-box {
+      margin: 0 auto 30px;
+      max-width: 400px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid #ff99bb;
+      font-size: 1em;
+    }
+
+    .accordion {
+      background-color: #ffe4f0;
+      color: #333;
+      cursor: pointer;
+      padding: 15px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      font-size: 1.2em;
+      font-weight: 600;
+      border-radius: 12px;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .accordion:hover {
+      background-color: #ffccdd;
+    }
+
+    .panel {
+      display: none;
+      overflow: hidden;
+      padding: 0 20px;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 0 0 12px 12px;
+      margin-bottom: 10px;
+    }
+
+    .command-item {
+      margin: 15px 0;
+      background: rgba(255,255,255,0.6);
+      padding: 12px 15px;
+      border-radius: 10px;
+      transition: 0.2s ease;
+    }
+
+    .command-item summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #cc3366;
+      font-size: 1em;
+    }
+
+    .command-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    footer {
+      padding: 40px 20px 20px;
+      background: linear-gradient(to right, #ffd6ea, #ffc1e3);
+      text-align: center;
+      color: #333;
+      margin-top: 100px;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <img src="/assets/logo_.png" alt="Lotus">
+  <ul>
+    <li><a href="index.html#hero">Home</a></li>
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="commands.html">Commands</a></li>
+  </ul>
+</nav>
+
+<section class="commands-section">
+  <h1>Bot Commands</h1>
+  <div class="search-box">
+    <input type="text" id="commandSearch" placeholder="Search commands...">
+  </div>
+  <div id="commandsContainer"></div>
+</section>
+
+<footer>
+  <p>© 2025 BrahmaTech. All rights reserved.</p>
+</footer>
+
+<script>
+  const container = document.getElementById("commandsContainer");
+  const searchInput = document.getElementById("commandSearch");
+
+  let rawCommands = {}; // Loaded from JSON
+
+  // Load JSON
+  fetch("commands.json")
+    .then(res => res.json())
+    .then(data => {
+      rawCommands = data;
+      renderCommands(data);
+    });
+
+  function renderCommands(data) {
+    container.innerHTML = '';
+    for (const category in data) {
+      const accordion = document.createElement("button");
+      accordion.className = "accordion";
+      accordion.textContent = category;
+      container.appendChild(accordion);
+
+      const panel = document.createElement("div");
+      panel.className = "panel";
+
+      data[category].forEach(cmd => {
+        const details = document.createElement("details");
+        details.className = "command-item";
+
+        const summary = document.createElement("summary");
+        summary.textContent = `${cmd.name}`;
+
+        const desc = document.createElement("div");
+        desc.innerHTML = `
+          <p><strong>Description:</strong> ${cmd.description}</p>
+          <p><strong>Usage:</strong> <code>${cmd.usage}</code></p>
+        `;
+
+        details.appendChild(summary);
+        details.appendChild(desc);
+        panel.appendChild(details);
+      });
+
+      container.appendChild(panel);
+    }
+
+    initAccordions();
+  }
+
+  function initAccordions() {
+    const accordions = document.querySelectorAll(".accordion");
+    accordions.forEach((acc, idx) => {
+      acc.onclick = () => {
+        document.querySelectorAll(".panel").forEach((p, i) => {
+          p.style.display = i === idx && p.style.display !== "block" ? "block" : "none";
+        });
+      };
+    });
+  }
+
+  // Filter commands
+  searchInput.addEventListener("input", () => {
+    const filter = searchInput.value.toLowerCase();
+    const filtered = {};
+
+    for (const category in rawCommands) {
+      const filteredCommands = rawCommands[category].filter(cmd =>
+        cmd.name.toLowerCase().includes(filter) ||
+        cmd.description.toLowerCase().includes(filter)
+      );
+      if (filteredCommands.length) {
+        filtered[category] = filteredCommands;
+      }
+    }
+
+    renderCommands(filtered);
+  });
+</script>
+
+</body>
+</html>
