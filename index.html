@@ -159,18 +159,6 @@
       cursor: pointer;
     }
 
-    .sound-toggle {
-      position: fixed;
-      bottom: 100px;
-      right: 30px;
-      background: #fff0f5;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-
     @keyframes slideUp {
       0% { opacity: 0; transform: translateY(40px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -228,12 +216,6 @@
 
 <!-- Back to top -->
 <button onclick="scrollToTop()" class="top-btn">↑</button>
-<div class="sound-toggle" onclick="toggleSound()">🔊 Sound</div>
-
-<!-- Audio -->
-<audio id="ambientAudio" loop>
-  <source src="/assets/bg_sound.mp3" type="audio/mpeg" />
-</audio>
 
 <!-- JS -->
 <script>
@@ -299,20 +281,6 @@
   // Scroll to top
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  // Sound toggle
-  let soundOn = false;
-  function toggleSound() {
-    const audio = document.getElementById("ambientAudio");
-    if (!soundOn) {
-      audio.play();
-      document.querySelector('.sound-toggle').innerText = '🔇 Mute';
-    } else {
-      audio.pause();
-      document.querySelector('.sound-toggle').innerText = '🔊 Sound';
-    }
-    soundOn = !soundOn;
   }
 </script>
 
