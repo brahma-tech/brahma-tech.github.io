@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard | BrahmaTech Bot</title>
+<style>
+  body {
+    background: #0d0d0d;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    padding-top: 100px;
+  }
+  #login-btn {
+    background: #5865F2;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Welcome to BrahmaTech Bot Dashboard</h1>
+<p>Please log in with Discord to continue</p>
+
+<button id="login-btn">Login with Discord</button>
+
+<script>
+const clientId = "1390039097992810606"; // Your bot's client ID
+const redirectUri = encodeURIComponent(window.location.href.split('#')[0]);
+const scope = "identify";
+
+// If logged in already
+const discordUser = JSON.parse(localStorage.getItem("discordUser"));
+if (discordUser) {
+  showDashboard(discordUser);
+}
+
+// Handle login button click
+document.getElementById("login-btn").addEventListener("click", () => {
+  window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}`;
+});
+
+// Handle OAuth redirect
+if (window.location.hash.includes("access_token")) {
+  const params = new URLSearchParams(window.location.hash.substring(1));
+  fetch("https://discord.com/api/users/@me", {
+    headers: { Authorization: `Bearer ${params.get("access_token")}` }
+  })
+  .then(res => res.json())
+  .then(user => {
+    localStorage.setItem("discordUser", JSON.stringify(user));
+    showDashboard(user);
+    window.history.replaceState({}, document.title, window.location.pathname);
+  });
+}
+
+function showDashboard(user) {
+  document.body.innerHTML = `
+    <h1>Welcome, ${user.username}#${user.discriminator}</h1>
+    <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" width="100" style="border-radius:50%"><br><br>
+    <button onclick="logout()">Logout</button>
+  `;
+}
+
+function logout() {
+  localStorage.removeItem("discordUser");
+  location.reload();
+}
+</script>
+
+</body>
+</html>
