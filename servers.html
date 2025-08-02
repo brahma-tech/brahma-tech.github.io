@@ -51,7 +51,7 @@
 <body>
 
 <h1>Select a Server</h1>
-<p>Choose the server you want to view stats for</p>
+<p>Choose the server you want to view your stats for</p>
 <div class="server-grid" id="serverGrid">Loading servers...</div>
 
 <script>
@@ -67,24 +67,37 @@
     })
     .then(res => res.json())
     .then(guilds => {
-      const managedGuilds = guilds.filter(g => (g.permissions & 0x20) === 0x20); // MANAGE_GUILD
+      // Filter: Only guilds where BrahmaTech Bot is also present
+      // In production, replace botGuildIds with a fetch from your bot API
+      const botGuildIds = ["1394299073305116805"]; // Example: BrahmaTech's guilds
+      const sharedGuilds = guilds.filter(g => botGuildIds.includes(g.id));
+
       const grid = document.getElementById("serverGrid");
       grid.innerHTML = "";
-      managedGuilds.forEach(guild => {
+
+      if (sharedGuilds.length === 0) {
+        grid.innerHTML = "<p style='color:gray'>You are not in any servers with BrahmaTech Bot.</p>";
+        return;
+      }
+
+      sharedGuilds.forEach(guild => {
         const iconURL = guild.icon 
           ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
           : "https://cdn.discordapp.com/embed/avatars/0.png";
+
         const card = document.createElement("div");
         card.className = "server-card";
         card.innerHTML = `
           <img src="${iconURL}" alt="server icon">
           <div class="server-name">${guild.name}</div>
         `;
+        
         card.onclick = () => {
           localStorage.setItem("selectedGuild", JSON.stringify(guild));
           localStorage.setItem("accessToken", token);
           window.location.href = "dashboard.html";
         };
+        
         grid.appendChild(card);
       });
     })
