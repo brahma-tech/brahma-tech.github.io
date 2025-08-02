@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>BrahmaTech Bot Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -27,13 +26,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-  header img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    vertical-align: middle;
-    margin-right: 10px;
+    flex-wrap: wrap;
   }
   header h1 {
     margin: 0;
@@ -43,8 +36,14 @@
     display: flex;
     align-items: center;
   }
+  header .user-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-left: 10px;
+  }
   .container {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: auto;
     padding: 2rem;
   }
@@ -78,30 +77,30 @@
     font-size: 0.9rem;
     color: #555;
   }
-  .level-bar {
-    background: #ffe4ef;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 10px;
+  .badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
   }
-  .level-fill {
-    background: var(--main-color);
-    height: 12px;
-    transition: width 0.4s ease;
+  .badge {
+    background: #ffe4ef;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #cc3366;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>BrahmaTech Dashboard</h1>
-  <div class="user-info" id="userInfo">
-    <!-- Filled dynamically -->
-  </div>
+  <h1 id="serverName">BrahmaTech Dashboard</h1>
+  <div class="user-info" id="userInfo">Loading...</div>
 </header>
 
 <div class="container">
-  <h2>Leveling Stats</h2>
+  <h2>Stats Overview</h2>
   <div class="stats-grid" id="statsGrid">
     <p>Loading stats...</p>
   </div>
@@ -133,6 +132,18 @@
     window.location.href = "login.html";
   }
 
+  // Fetch server name
+  fetch("https://discord.com/api/users/@me/guilds", {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  .then(res => res.json())
+  .then(guilds => {
+    const guild = guilds.find(g => g.id === guildId);
+    if (guild) {
+      document.getElementById("serverName").textContent = guild.name + " | Dashboard";
+    }
+  });
+
   // Fetch user info
   fetch("https://discord.com/api/users/@me", {
     headers: { Authorization: `Bearer ${token}` }
@@ -140,55 +151,61 @@
   .then(res => res.json())
   .then(user => {
     document.getElementById("userInfo").innerHTML = `
-      <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" alt="avatar">
       ${user.username}#${user.discriminator}
+      <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" alt="avatar">
     `;
     loadStats(user.id);
-  })
-  .catch(() => {
-    alert("Failed to fetch user info");
   });
 
   function loadStats(userId) {
-    db.collection("levelingData")
-      .doc(guildId)
-      .collection("users")
-      .doc(userId)
-      .get()
-      .then(doc => {
-        if (!doc.exists) {
-          document.getElementById("statsGrid").innerHTML = "<p>No leveling data found.</p>";
-          return;
-        }
-        const data = doc.data();
-        const xpPercent = (data.currentXP / data.xpForNextLevel) * 100;
-
-        document.getElementById("statsGrid").innerHTML = `
-          <div class="card">
-            <div class="stat-value">${data.level || 0}</div>
-            <div class="stat-label">Level</div>
-          </div>
-          <div class="card">
-            <div class="stat-value">${data.currentXP || 0}</div>
-            <div class="stat-label">Current XP</div>
-            <div class="level-bar">
-              <div class="level-fill" style="width:${xpPercent}%;"></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="stat-value">${data.vcTime || 0} hrs</div>
-            <div class="stat-label">Voice Chat Time</div>
-          </div>
-          <div class="card">
-            <div class="stat-value">${data.dailyStreak || 0}</div>
-            <div class="stat-label">Daily Streak</div>
-          </div>
-        `;
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById("statsGrid").innerHTML = "<p>Error loading stats.</p>";
-      });
+    db.collection("users").doc(userId).get().then(doc => {
+      if (!doc.exists) {
+        document.getElementById("statsGrid").innerHTML = "<p>No user data found.</p>";
+        return;
+      }
+      const data = doc.data();
+      
+      const badgeHTML = data.badges?.map(b => `<span class="badge">${b}</span>`).join("") || "No badges";
+      
+      document.getElementById("statsGrid").innerHTML = `
+        <div class="card">
+          <div class="stat-value">${data.level || 0}</div>
+          <div class="stat-label">Level</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">${data.xp || 0}</div>
+          <div class="stat-label">XP</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">${data.gems || 0}</div>
+          <div class="stat-label">Gems</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">${data.coins || 0}</div>
+          <div class="stat-label">Coins</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">${Math.round((data.vcTime || 0) / 3600)} hrs</div>
+          <div class="stat-label">Voice Chat Time</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">${Math.round((data.study_hours || 0) / 60)} hrs</div>
+          <div class="stat-label">Study Hours</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">${data.streak || 0}</div>
+          <div class="stat-label">Current Streak</div>
+        </div>
+        <div class="card">
+          <div class="stat-value">${data.warnings || 0}</div>
+          <div class="stat-label">Warnings</div>
+        </div>
+        <div class="card">
+          <div class="stat-label">Badges</div>
+          <div class="badge-list">${badgeHTML}</div>
+        </div>
+      `;
+    });
   }
 </script>
 
