@@ -203,9 +203,10 @@ function logout() {
             localStorage.setItem("currentUser", JSON.stringify(decoded.user));
             localStorage.setItem("mutualServers", JSON.stringify(decoded.servers));
 
-            // After login, force user to pick a server
+            // Force user to pick a server after login
             localStorage.removeItem("selectedGuild");
             window.location.href = "servers.html";
+            return; // Stop loading dashboard
         } catch (err) {
             console.error("Invalid OAuth data:", err);
             alert("Login failed, please try again.");
@@ -214,11 +215,19 @@ function logout() {
     }
 })();
 
-// Check token
+// Token check
 const token = localStorage.getItem("accessToken");
 if (!token) {
     alert("No access token found. Please log in again.");
     window.location.href = "index.html";
+}
+
+// Guild selection check
+const guild = JSON.parse(localStorage.getItem("selectedGuild"));
+if (!guild) {
+    window.location.href = "servers.html";
+} else {
+    document.getElementById("guildName").textContent = guild.name;
 }
 
 // Check guild selection
