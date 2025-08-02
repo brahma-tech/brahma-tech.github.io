@@ -1,3 +1,4 @@
+<!-- login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -164,11 +165,10 @@
     initPetals();
   });
 
-// 🔑 Discord Login via Vercel backend
-document.getElementById("discord-login").addEventListener("click", () => {
-  window.location.href = "https://brahmatech-backend.vercel.app/api/login";
-});
-
+  // 🔑 Discord Login via backend with callback.html
+  document.getElementById("discord-login").addEventListener("click", () => {
+    window.location.href = "https://brahmatech-backend.vercel.app/api/login?redirect_uri=https://brahma-tech.github.io/callback.html";
+  });
 </script>
 
 </body>
