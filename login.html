@@ -1,55 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Login | BrahmaTech Bot Dashboard</title>
-<style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #f8f8f8;
-    margin: 0;
-    text-align: center;
-    padding-top: 100px;
-    color: #333;
-  }
-  h1 {
-    color: #ff4da6;
-    font-size: 2.5rem;
-  }
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-  }
-  .login-btn {
-    background: #ff4da6;
-    color: white;
-    padding: 14px 28px;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-  .login-btn:hover {
-    background: #e04395;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BrahmaTech Dashboard Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="/assets/logo_.png">
+  <style>
+    :root {
+      --main-color: #ffd6ea;
+      --accent-color: #ff99bb;
+      --bg-gradient: linear-gradient(135deg, #fff0f5, #ffe4f0);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-gradient);
+      overflow-x: hidden;
+    }
+    canvas#petalCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    nav img { width: 40px; height: 40px; }
+    nav ul { display: flex; gap: 20px; list-style: none; }
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    nav ul li a:hover { color: #e91e63; }
+    .hero {
+      text-align: center;
+      padding: 120px 20px;
+    }
+    .hero h1 {
+      font-family: 'Parisienne', cursive;
+      font-size: 3.5em;
+      color: #cc3366;
+      text-shadow: 0 0 10px rgba(255,182,193,0.5);
+    }
+    .login-btn {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 15px 30px;
+      background-color: #5865F2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      text-decoration: none;
+    }
+    .login-btn:hover {
+      background-color: #4752C4;
+    }
+    footer {
+      padding: 40px 20px;
+      background: linear-gradient(to right, #ffd6ea, #ffc1e3);
+      text-align: center;
+      color: #333;
+      margin-top: 100px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Welcome to BrahmaTech Bot Dashboard</h1>
-<p>Sign in with Discord to manage your servers</p>
-<button class="login-btn" onclick="login()">Login with Discord</button>
+<canvas id="petalCanvas"></canvas>
+
+<nav>
+  <img src="/assets/logo_.png" alt="Lotus">
+  <ul>
+    <li><a href="https://brahma-tech.github.io">Home</a></li>
+    <li><a href="/support.html">Support</a></li>
+    <li><a href="/commands.html">Commands</a></li>
+    <li><a href="/login.html">Dashboard</a></li>
+    <li><a href="https://discord.com/oauth2/authorize?client_id=1390039097992810606&permissions=8&scope=bot+applications.commands">Invite</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <h1>Welcome to BrahmaTech Dashboard</h1>
+  <p>Login with Discord to manage and view your bot's stats</p>
+  <a id="discord-login" class="login-btn">Login with Discord</a>
+</section>
+
+<footer>
+  <p>© 2025 BrahmaTech. All rights reserved.</p>
+</footer>
 
 <script>
-  function login() {
-    const clientId = "1390039097992810606"; // Your bot's client ID
-    const redirectUri = encodeURIComponent("https://brahma-tech.github.io/servers.html");
-    const scope = "identify guilds";
-    window.location.href = 
-      `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+  // 🌸 Petal Animation
+  const canvas = document.getElementById("petalCanvas");
+  const ctx = canvas.getContext("2d");
+  let petals = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
+
+  function Petal() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.r = Math.random() * 8 + 4;
+    this.speed = Math.random() * 1 + 0.5;
+    this.wind = Math.random() * 0.6 - 0.3;
+    this.opacity = Math.random() * 0.5 + 0.5;
+
+    this.draw = function () {
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(255,192,203,${this.opacity})`;
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    this.update = function () {
+      this.y += this.speed;
+      this.x += this.wind;
+
+      if (this.y > canvas.height || this.x > canvas.width || this.x < 0) {
+        this.x = Math.random() * canvas.width;
+        this.y = 0;
+      }
+      this.draw();
+    };
+  }
+
+  function initPetals() {
+    petals = [];
+    for (let i = 0; i < 80; i++) petals.push(new Petal());
+  }
+
+  function animatePetals() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    petals.forEach(p => p.update());
+    requestAnimationFrame(animatePetals);
+  }
+
+  resizeCanvas();
+  initPetals();
+  animatePetals();
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+    initPetals();
+  });
+
+  // 🔑 Discord Login
+  document.getElementById("discord-login").addEventListener("click", () => {
+    const clientId = "1390039097992810606";
+    const redirectUri = encodeURIComponent("https://brahma-tech.github.io/servers.html"); // After login
+    const scope = "identify guilds";
+    window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+  });
 </script>
 
 </body>
