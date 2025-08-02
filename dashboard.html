@@ -1,145 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>BrahmaTech Bot Dashboard</title>
+  <meta charset="UTF-8">
+  <title>Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { background: #0d0d0d; color: white; font-family: sans-serif; margin: 0; }
-    header { background: #1a1a1a; padding: 1rem; text-align: center; }
-    header h1 { color: #00ffe7; }
-    #login-btn { background: #5865F2; padding: 0.8rem 1.5rem; border: none; color: white; border-radius: 8px; cursor: pointer; }
-    .container { max-width: 1000px; margin: auto; padding: 1rem; }
-    .guild-card { display: flex; align-items: center; gap: 1rem; background: #1e1e1e; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; margin-bottom: 0.5rem; }
-    .guild-card:hover { background: #2a2a2a; }
-    nav { display: flex; gap: 1rem; margin-bottom: 1rem; }
-    nav button { background: #222; border: none; color: white; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
-    nav button.active { background: #00ffe7; color: black; }
-    label { display: block; margin: 0.5rem 0 0.2rem; }
-    input { width: 100%; padding: 0.5rem; border-radius: 8px; border: none; background: #222; color: white; }
-    button.save { margin-top: 1rem; background: #00ffe7; color: black; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f7f7;
+      color: #333;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 240px;
+      background: #fff;
+      border-right: 1px solid #ddd;
+      padding-top: 20px;
+    }
+    .sidebar h2 {
+      text-align: center;
+      color: #ff4da6;
+      margin-bottom: 20px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar ul li {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .sidebar ul li:hover,
+    .sidebar ul li.active {
+      background: #ffe6f0;
+      color: #ff4da6;
+      font-weight: bold;
+    }
+    .main {
+      margin-left: 240px;
+      padding: 20px;
+    }
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .cards {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: #fff;
+      flex: 1;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #666;
+    }
+    .card p {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff4da6;
+      margin: 5px 0 0;
+    }
+    .chart-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>⚙️ BrahmaTech Bot Dashboard</h1>
-  <button id="login-btn">Login with Discord</button>
-</header>
-
-<div class="container" id="content">
-  <!-- Dynamic Content Here -->
+<div class="sidebar">
+  <h2>📊 Stats</h2>
+  <ul>
+    <li class="active">Overview</li>
+    <li>Messages</li>
+    <li>Voice</li>
+    <li>Status</li>
+    <li>Activity</li>
+    <li>Analytics</li>
+    <li>Member Drilldown</li>
+    <li>Channel Drilldown</li>
+  </ul>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<div class="main">
+  <div class="filters">
+    <select>
+      <option>Last 7 days</option>
+      <option>Last 30 days</option>
+      <option>Last 90 days</option>
+    </select>
+    <select>
+      <option>All Users</option>
+      <option>Members</option>
+      <option>Bots</option>
+    </select>
+    <select>
+      <option>All Channels</option>
+      <option>#general</option>
+      <option>#voice</option>
+    </select>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Total Members</h3>
+      <p>1,245</p>
+    </div>
+    <div class="card">
+      <h3>Joins</h3>
+      <p>75</p>
+    </div>
+    <div class="card">
+      <h3>Leaves</h3>
+      <p>12</p>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="growthChart" height="100"></canvas>
+  </div>
+</div>
 
 <script>
-  // Firebase Init
-  const firebaseConfig = {
-    apiKey: "AIzaSyDknSfqRvswpAbwEmrwp8AHLWII9FMa1v0",
-    authDomain: "brahma-tech.firebaseapp.com",
-    projectId: "brahma-tech",
-    storageBucket: "brahma-tech.firebasestorage.app",
-    messagingSenderId: "374755840852",
-    appId: "1:374755840852:web:deb0527b454adeaf47eec1"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  let accessToken = null;
-  let selectedGuildId = null;
-
-  // Handle OAuth2 Redirect
-  const params = new URLSearchParams(window.location.hash.substring(1));
-  if (params.has("access_token")) {
-    accessToken = params.get("access_token");
-    document.getElementById("login-btn").style.display = "none";
-    loadGuildSelector();
-  }
-
-  document.getElementById("login-btn").addEventListener("click", () => {
-    const clientId = "1390039097992810606";
-    const redirectUri = encodeURIComponent(window.location.href.split('#')[0]);
-    const scope = "identify guilds";
-    const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}`;
-    window.location.href = url;
-  });
-
-  function loadGuildSelector() {
-    fetch("https://discord.com/api/users/@me/guilds", {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    .then(res => res.json())
-    .then(guilds => {
-      const content = document.getElementById("content");
-      content.innerHTML = `<h2>Select a Server</h2>`;
-      guilds.filter(g => (g.permissions & 0x20) === 0x20).forEach(guild => {
-        content.innerHTML += `
-          <div class="guild-card" data-id="${guild.id}">
-            <img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png" width="50" style="border-radius: 50%;">
-            <span>${guild.name}</span>
-          </div>
-        `;
-      });
-
-      document.querySelectorAll(".guild-card").forEach(card => {
-        card.addEventListener("click", () => {
-          selectedGuildId = card.getAttribute("data-id");
-          loadGuildDashboard();
-        });
-      });
-    });
-  }
-
-  function loadGuildDashboard() {
-    const content = document.getElementById("content");
-    content.innerHTML = `
-      <h2>Server Dashboard</h2>
-      <nav>
-        <button onclick="loadLeveling()" class="active">📊 Leveling</button>
-        <button onclick="alert('Moderation Coming Soon')">🛡️ Moderation</button>
-        <button onclick="alert('Tickets Coming Soon')">🎟️ Tickets</button>
-      </nav>
-      <div id="module-content"></div>
-    `;
-    loadLeveling();
-  }
-
-  function loadLeveling() {
-    const module = document.getElementById("module-content");
-    module.innerHTML = `
-      <h3>📊 Leveling Settings</h3>
-      <label>XP Per Message:</label>
-      <input type="number" id="xpPerMessage" min="1">
-      <label>Level-Up Message:</label>
-      <input type="text" id="levelUpMessage">
-      <button class="save" onclick="saveLeveling()">💾 Save</button>
-      <p id="status"></p>
-    `;
-
-    db.collection("levelingConfig").doc(selectedGuildId).get().then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        document.getElementById("xpPerMessage").value = data.xpPerMessage || 10;
-        document.getElementById("levelUpMessage").value = data.levelUpMessage || "🎉 {user} reached level {level}!";
-      } else {
-        document.getElementById("xpPerMessage").value = 10;
-        document.getElementById("levelUpMessage").value = "🎉 {user} reached level {level}!";
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Member Growth',
+        data: [1200, 1210, 1225, 1230, 1240, 1245, 1250],
+        borderColor: '#ff4da6',
+        backgroundColor: 'rgba(255,77,166,0.1)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
       }
-    });
-  }
-
-  function saveLeveling() {
-    const xp = parseInt(document.getElementById("xpPerMessage").value);
-    const msg = document.getElementById("levelUpMessage").value;
-
-    db.collection("levelingConfig").doc(selectedGuildId).set({
-      xpPerMessage: xp,
-      levelUpMessage: msg
-    }, { merge: true }).then(() => {
-      document.getElementById("status").innerText = "✅ Saved!";
-    });
-  }
+    }
+  });
 </script>
+
 </body>
 </html>
