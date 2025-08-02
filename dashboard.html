@@ -200,7 +200,7 @@
         </div>
     </div>
 </div>
-
+    
 <script>
 function showSection(sectionId) {
     document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
@@ -219,8 +219,16 @@ if (!token) {
 const guild = JSON.parse(localStorage.getItem("selectedGuild"));
 document.getElementById("guildName").textContent = guild ? guild.name : "Unknown Server";
 
+// === Current logged in user ===
+// You should store this in localStorage when logging in with Discord OAuth
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+if (!currentUser) {
+    alert("No user info found. Please log in again.");
+    window.location.href = "index.html";
+}
+
 // === Fetch Stats ===
-fetch(`https://brahmatech-backend.vercel.app/api/stats?guildId=${guild.id}`, {
+fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId=${guild.id}&userId=${currentUser.id}`, {
     headers: { Authorization: `Bearer ${token}` }
 })
 .then(res => res.json())
@@ -251,10 +259,10 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?guildId=${guild.id}`, {
         new Chart(document.getElementById("xpChart"), {
             type: 'line',
             data: {
-                labels: data.xpHistory.labels,
+                labels: Object.keys(data.xpHistory),
                 datasets: [{
                     label: 'XP',
-                    data: data.xpHistory.values,
+                    data: Object.values(data.xpHistory),
                     borderColor: '#ff4da6',
                     fill: false
                 }]
@@ -264,10 +272,10 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?guildId=${guild.id}`, {
         new Chart(document.getElementById("vcChart"), {
             type: 'line',
             data: {
-                labels: data.vcHistory.labels,
+                labels: Object.keys(data.vcHistory),
                 datasets: [{
                     label: 'VC Hours',
-                    data: data.vcHistory.values,
+                    data: Object.values(data.vcHistory),
                     borderColor: '#4da6ff',
                     fill: false
                 }]
@@ -291,14 +299,16 @@ function fillLB(tableId, data) {
     });
 }
 
-fetch(`https://brahmatech-backend.vercel.app/api/leaderboard?type=vc&guildId=${guild.id}`, {
+// VC Leaderboard
+fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=vc`, {
     headers: { Authorization: `Bearer ${token}` }
 })
 .then(res => res.json())
 .then(vcLB => fillLB("vcLeaderboard", vcLB))
 .catch(err => console.error("VC leaderboard error:", err));
 
-fetch(`https://brahmatech-backend.vercel.app/api/leaderboard?type=messages&guildId=${guild.id}`, {
+// Message Leaderboard
+fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=msg`, {
     headers: { Authorization: `Bearer ${token}` }
 })
 .then(res => res.json())
