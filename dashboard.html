@@ -2,179 +2,294 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BrahmaTech Dashboard</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"></script>
+<title>BrahmaTech Bot | Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
 <style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #fff0f5;
-    margin: 0;
-    padding: 0;
-    color: #333;
-  }
-  header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: #ffb6c1;
-    color: white;
-  }
-  header img {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-  }
-  .container {
-    padding: 20px;
-    max-width: 900px;
-    margin: auto;
-  }
-  h1 {
-    text-align: center;
-    color: #ff4da6;
-  }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-  }
-  .stat-card {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
-  .stat-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #ff4da6;
-  }
-  .badges {
-    margin-top: 30px;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
-  .badge-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .badge {
-    background: #ffccdd;
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 0.9rem;
-  }
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        background: #f5f6fa;
+        color: #333;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 220px;
+        background: #ff4da6;
+        color: white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        top: 0;
+        padding-top: 20px;
+    }
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .sidebar a {
+        padding: 14px 20px;
+        color: white;
+        text-decoration: none;
+        display: block;
+        transition: background 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Main content */
+    .main {
+        margin-left: 220px;
+        padding: 20px;
+        flex: 1;
+    }
+    h1 {
+        margin-top: 0;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    .card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .card img {
+        width: 40px;
+        margin-bottom: 10px;
+    }
+    .card h3 {
+        margin: 0;
+        font-size: 1.4em;
+    }
+    .card p {
+        color: gray;
+        margin: 5px 0 0;
+    }
+
+    /* Badges */
+    .badge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+    }
+    .badge {
+        background: white;
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .badge img {
+        width: 60px;
+    }
+    .badge span {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.9em;
+    }
+
+    /* Leaderboards */
+    .leaderboard {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .leaderboard table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .leaderboard th, .leaderboard td {
+        padding: 8px;
+        text-align: left;
+    }
+    .leaderboard tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+    .lb-avatar {
+        border-radius: 50%;
+        width: 32px;
+        vertical-align: middle;
+        margin-right: 8px;
+    }
+
+    /* Charts */
+    .chart-container {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<header>
-  <img id="serverIcon" src="" alt="Server Icon">
-  <div>
-    <div id="serverName" style="font-size:1.2rem; font-weight:bold;"></div>
-    <div id="userName" style="font-size:0.9rem;"></div>
-  </div>
-</header>
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Dashboard</h2>
+    <a href="#" class="active" onclick="showSection('stats')">📊 Stats</a>
+    <a href="#" onclick="showSection('badges')">🏅 Badges</a>
+    <a href="#" onclick="showSection('charts')">📈 Charts</a>
+    <a href="#" onclick="showSection('leaderboards')">🏆 Leaderboards</a>
+    <a href="servers.html">⬅ Back</a>
+</div>
 
-<div class="container">
-  <h1>Your Stats</h1>
-  <div id="statsGrid" class="stats-grid">Loading stats...</div>
+<!-- Main content -->
+<div class="main">
+    <h1 id="guildName">Loading...</h1>
 
-  <div class="badges">
-    <h2>Badges</h2>
-    <div id="badgeList" class="badge-list"></div>
-  </div>
+    <!-- Stats Section -->
+    <div id="stats" class="section">
+        <div class="stats-grid">
+            <div class="card"><img src="assets/icons/xp.png"><h3 id="xp">0</h3><p>XP</p></div>
+            <div class="card"><img src="assets/icons/vc.png"><h3 id="vcTime">0h</h3><p>VC Time</p></div>
+            <div class="card"><img src="assets/icons/level.png"><h3 id="level">0</h3><p>Level</p></div>
+            <div class="card"><img src="assets/icons/streak.png"><h3 id="streak">0</h3><p>Streak</p></div>
+            <div class="card"><img src="assets/icons/coins.png"><h3 id="coins">0</h3><p>Coins</p></div>
+        </div>
+    </div>
+
+    <!-- Badges Section -->
+    <div id="badges" class="section" style="display:none;">
+        <div class="badge-grid" id="badgeGrid">
+            Loading badges...
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div id="charts" class="section" style="display:none;">
+        <div class="chart-container">
+            <h3>XP Growth</h3>
+            <canvas id="xpChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3>VC Time Growth</h3>
+            <canvas id="vcChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Leaderboards Section -->
+    <div id="leaderboards" class="section" style="display:none;">
+        <div class="leaderboard">
+            <h3>VC Leaderboard</h3>
+            <table id="vcLeaderboard">
+                <tr><th>#</th><th>User</th><th>Time</th></tr>
+            </table>
+        </div>
+        <br>
+        <div class="leaderboard">
+            <h3>Messages Leaderboard</h3>
+            <table id="msgLeaderboard">
+                <tr><th>#</th><th>User</th><th>Messages</th></tr>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
-  // Firebase Config (replace with yours)
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+function showSection(sectionId) {
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(sectionId).style.display = 'block';
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+    event.target.classList.add('active');
+}
 
-  const guildData = JSON.parse(localStorage.getItem("selectedGuild"));
-  const token = localStorage.getItem("accessToken");
+// Load guild info
+const guild = JSON.parse(localStorage.getItem("selectedGuild"));
+document.getElementById("guildName").textContent = guild ? guild.name : "Unknown Server";
 
-  if (!guildData || !token) {
-    alert("No guild or token found. Please login again.");
-    window.location.href = "login.html";
-  }
+// Fetch stats from backend (placeholder data for now)
+const stats = {
+    xp: 5000,
+    vcTime: 120,
+    level: 10,
+    streak: 45,
+    coins: 350
+};
+document.getElementById("xp").textContent = stats.xp;
+document.getElementById("vcTime").textContent = stats.vcTime + "h";
+document.getElementById("level").textContent = stats.level;
+document.getElementById("streak").textContent = stats.streak;
+document.getElementById("coins").textContent = stats.coins;
 
-  document.getElementById("serverName").innerText = guildData.name;
-  document.getElementById("serverIcon").src = guildData.icon 
-    ? `https://cdn.discordapp.com/icons/${guildData.id}/${guildData.icon}.png`
-    : "https://cdn.discordapp.com/embed/avatars/0.png";
+// Badges (placeholder)
+const badges = [
+    { name: "Streak 50", img: "assets/badges/streak_50.png" },
+    { name: "VC Master", img: "assets/badges/vc_master.png" }
+];
+const badgeGrid = document.getElementById("badgeGrid");
+badgeGrid.innerHTML = "";
+badges.forEach(b => {
+    const div = document.createElement("div");
+    div.className = "badge";
+    div.innerHTML = `<img src="${b.img}" alt="${b.name}"><span>${b.name}</span>`;
+    badgeGrid.appendChild(div);
+});
 
-  // Get user info from Discord
-  fetch("https://discord.com/api/users/@me", {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  .then(res => res.json())
-  .then(user => {
-    document.getElementById("userName").innerText = `${user.username}#${user.discriminator}`;
-    const userId = user.id;
-
-    // Fetch stats from Firestore
-    const docId = `${guildData.id}_${userId}`;
-    db.collection("users").doc(docId).get().then(docSnap => {
-      if (!docSnap.exists) {
-        document.getElementById("statsGrid").innerHTML = "<p>No stats found.</p>";
-        return;
-      }
-      const data = docSnap.data();
-      renderStats(data);
-    });
-  });
-
-  function renderStats(data) {
-    const stats = [
-      { label: "Level", value: data.level },
-      { label: "XP", value: data.xp },
-      { label: "Coins", value: data.coins },
-      { label: "Gems", value: data.gems },
-      { label: "VC Time (s)", value: data.vcTime },
-      { label: "Study Hours", value: data.study_hours },
-      { label: "Daily Msg Count", value: data.dailyMessageCount },
-      { label: "Streak", value: data.streak },
-      { label: "Warnings", value: data.warnings }
-    ];
-
-    const grid = document.getElementById("statsGrid");
-    grid.innerHTML = "";
-    stats.forEach(stat => {
-      const card = document.createElement("div");
-      card.className = "stat-card";
-      card.innerHTML = `
-        <div class="stat-value">${stat.value ?? 0}</div>
-        <div>${stat.label}</div>
-      `;
-      grid.appendChild(card);
-    });
-
-    // Render badges
-    const badgeList = document.getElementById("badgeList");
-    badgeList.innerHTML = "";
-    if (Array.isArray(data.badges)) {
-      data.badges.forEach(badge => {
-        const b = document.createElement("div");
-        b.className = "badge";
-        b.innerText = badge;
-        badgeList.appendChild(b);
-      });
+// Charts (placeholder)
+new Chart(document.getElementById("xpChart"), {
+    type: 'line',
+    data: {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+        datasets: [{
+            label: 'XP',
+            data: [500, 800, 1500, 2000],
+            borderColor: '#ff4da6',
+            fill: false
+        }]
     }
-  }
+});
+new Chart(document.getElementById("vcChart"), {
+    type: 'line',
+    data: {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+        datasets: [{
+            label: 'VC Hours',
+            data: [10, 15, 25, 30],
+            borderColor: '#4da6ff',
+            fill: false
+        }]
+    }
+});
+
+// Leaderboards (placeholder)
+const vcLB = [
+    { username: "Alice", id: "1", value: "120h" },
+    { username: "Bob", id: "2", value: "100h" }
+];
+const msgLB = [
+    { username: "Alice", id: "1", value: "500" },
+    { username: "Bob", id: "2", value: "450" }
+];
+function fillLB(tableId, data) {
+    const table = document.getElementById(tableId);
+    let pos = 1;
+    data.forEach(user => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${pos}</td>
+            <td><img src="https://cdn.discordapp.com/embed/avatars/0.png" class="lb-avatar">${user.username}</td>
+            <td>${user.value}</td>`;
+        table.appendChild(row);
+        pos++;
+    });
+}
+fillLB("vcLeaderboard", vcLB);
+fillLB("msgLeaderboard", msgLB);
 </script>
 
 </body>
