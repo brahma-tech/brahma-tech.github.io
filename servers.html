@@ -55,52 +55,71 @@
 <div class="server-grid" id="serverGrid">Loading servers...</div>
 
 <script>
-function loadServers() {
+(function handleOAuthRedirect() {
   const params = new URLSearchParams(window.location.search);
   const encodedData = params.get("data");
 
   if (!encodedData) {
-    document.getElementById("serverGrid").innerHTML =
-      "<p style='color:red'>No data found. Please log in again.</p>";
+    // If no OAuth data found, but already logged in, load from localStorage
+    const mutualServers = JSON.parse(localStorage.getItem("mutualServers") || "[]");
+    if (mutualServers.length) {
+      displayServers(mutualServers);
+    } else {
+      document.getElementById("serverGrid").innerHTML =
+        "<p style='color:red'>No login data found. Please log in again.</p>";
+    }
     return;
   }
 
   try {
-    const mutualServers = JSON.parse(atob(encodedData));
-    const grid = document.getElementById("serverGrid");
-    grid.innerHTML = "";
+    const decoded = JSON.parse(atob(encodedData));
 
-    if (!mutualServers.length) {
-      grid.innerHTML =
-        "<p style='color:gray'>No servers found where you and BrahmaTech Bot are both present.</p>";
-      return;
-    }
+    // Save login/session data
+    localStorage.setItem("accessToken", decoded.token);
+    localStorage.setItem("tokenType", decoded.tokenType);
+    localStorage.setItem("currentUser", JSON.stringify(decoded.user));
+    localStorage.setItem("mutualServers", JSON.stringify(decoded.servers));
 
-    mutualServers.forEach((guild) => {
-      const iconURL = guild.icon
-        ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
-        : "https://cdn.discordapp.com/embed/avatars/0.png";
+    // Show server selection
+    displayServers(decoded.servers);
 
-      const card = document.createElement("div");
-      card.className = "server-card";
-      card.innerHTML = `
-        <img src="${iconURL}" alt="server icon">
-        <div class="server-name">${guild.name}</div>
-      `;
-      card.onclick = () => {
-        localStorage.setItem("selectedGuild", JSON.stringify(guild));
-        window.location.href = "dashboard.html";
-      };
-      grid.appendChild(card);
-    });
+    // Remove ?data=... from URL
+    window.history.replaceState({}, document.title, "servers.html");
   } catch (err) {
-    console.error(err);
+    console.error("Error parsing OAuth data:", err);
     document.getElementById("serverGrid").innerHTML =
       "<p style='color:red'>Failed to load servers.</p>";
   }
-}
+})();
 
-loadServers();
+function displayServers(servers) {
+  const grid = document.getElementById("serverGrid");
+  grid.innerHTML = "";
+
+  if (!servers.length) {
+    grid.innerHTML =
+      "<p style='color:gray'>No servers found where you and BrahmaTech Bot are both present.</p>";
+    return;
+  }
+
+  servers.forEach((guild) => {
+    const iconURL = guild.icon
+      ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
+      : "https://cdn.discordapp.com/embed/avatars/0.png";
+
+    const card = document.createElement("div");
+    card.className = "server-card";
+    card.innerHTML = `
+      <img src="${iconURL}" alt="server icon">
+      <div class="server-name">${guild.name}</div>
+    `;
+    card.onclick = () => {
+      localStorage.setItem("selectedGuild", JSON.stringify(guild));
+      window.location.href = "dashboard.html";
+    };
+    grid.appendChild(card);
+  });
+}
 </script>
 
 </body>
