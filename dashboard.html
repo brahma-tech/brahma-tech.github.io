@@ -126,7 +126,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
 <!-- Sidebar -->
 <div class="sidebar">
     <h2>Dashboard :</h2>
@@ -155,37 +154,25 @@
 
     <!-- Badges Section -->
     <div id="badges" class="section" style="display:none;">
-        <div class="badge-grid" id="badgeGrid">
-            Loading badges...
-        </div>
+        <div class="badge-grid" id="badgeGrid">Loading badges...</div>
     </div>
 
     <!-- Charts Section -->
     <div id="charts" class="section" style="display:none;">
-        <div class="chart-container">
-            <h3>XP Growth</h3>
-            <canvas id="xpChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <h3>VC Time Growth</h3>
-            <canvas id="vcChart"></canvas>
-        </div>
+        <div class="chart-container"><h3>XP Growth</h3><canvas id="xpChart"></canvas></div>
+        <div class="chart-container"><h3>VC Time Growth</h3><canvas id="vcChart"></canvas></div>
     </div>
 
     <!-- Leaderboards Section -->
     <div id="leaderboards" class="section" style="display:none;">
         <div class="leaderboard">
             <h3>VC Leaderboard</h3>
-            <table id="vcLeaderboard">
-                <tr><th>#</th><th>User</th><th>Time</th></tr>
-            </table>
+            <table id="vcLeaderboard"><tr><th>#</th><th>User</th><th>Time</th></tr></table>
         </div>
         <br>
         <div class="leaderboard">
             <h3>Messages Leaderboard</h3>
-            <table id="msgLeaderboard">
-                <tr><th>#</th><th>User</th><th>Messages</th></tr>
-            </table>
+            <table id="msgLeaderboard"><tr><th>#</th><th>User</th><th>Messages</th></tr></table>
         </div>
     </div>
 </div>
@@ -203,7 +190,7 @@ function logout() {
     window.location.href = "index.html";
 }
 
-// === Handle OAuth Redirect ===
+// Handle OAuth redirect login
 (function () {
     const params = new URLSearchParams(window.location.search);
     const encodedData = params.get("data");
@@ -215,8 +202,10 @@ function logout() {
             localStorage.setItem("tokenType", decoded.tokenType);
             localStorage.setItem("currentUser", JSON.stringify(decoded.user));
             localStorage.setItem("mutualServers", JSON.stringify(decoded.servers));
-            console.log("Stored OAuth login data:", decoded);
-            window.history.replaceState({}, document.title, "dashboard.html");
+
+            // After login, force user to pick a server
+            localStorage.removeItem("selectedGuild");
+            window.location.href = "servers.html";
         } catch (err) {
             console.error("Invalid OAuth data:", err);
             alert("Login failed, please try again.");
@@ -225,23 +214,30 @@ function logout() {
     }
 })();
 
-// === Auth & Guild Info ===
+// Check token
 const token = localStorage.getItem("accessToken");
 if (!token) {
     alert("No access token found. Please log in again.");
     window.location.href = "index.html";
 }
 
+// Check guild selection
 const guild = JSON.parse(localStorage.getItem("selectedGuild"));
-document.getElementById("guildName").textContent = guild ? guild.name : "Unknown Server";
+if (!guild) {
+    alert("Please select a server first.");
+    window.location.href = "servers.html";
+} else {
+    document.getElementById("guildName").textContent = guild.name;
+}
 
+// Check user
 const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 if (!currentUser) {
     alert("No user info found. Please log in again.");
     window.location.href = "index.html";
 }
 
-// === Fetch Stats ===
+// Fetch stats
 fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId=${guild.id}&userId=${currentUser.id}`, {
     headers: { Authorization: `Bearer ${token}` }
 })
