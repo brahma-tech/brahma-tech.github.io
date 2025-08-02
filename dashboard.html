@@ -6,122 +6,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
 <style>
-    body {
-        margin: 0;
-        font-family: 'Poppins', sans-serif;
-        display: flex;
-        background: #f5f6fa;
-        color: #333;
-    }
-    .sidebar {
-        width: 220px;
-        background: #ff4da6;
-        color: white;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        left: 0;
-        top: 0;
-        padding-top: 20px;
-    }
-    .sidebar h2 {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    .sidebar a {
-        padding: 14px 20px;
-        color: white;
-        text-decoration: none;
-        display: block;
-        transition: background 0.3s;
-    }
-    .sidebar a:hover, .sidebar a.active {
-        background: rgba(255, 255, 255, 0.2);
-    }
-    .main {
-        margin-left: 220px;
-        padding: 20px;
-        flex: 1;
-    }
-    h1 {
-        margin-top: 0;
-    }
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-    .card {
-        background: white;
-        border-radius: 10px;
-        padding: 15px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .card img {
-        width: 40px;
-        margin-bottom: 10px;
-    }
-    .card h3 {
-        margin: 0;
-        font-size: 1.4em;
-    }
-    .card p {
-        color: gray;
-        margin: 5px 0 0;
-    }
-    .badge-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 15px;
-    }
-    .badge {
-        background: white;
-        border-radius: 8px;
-        padding: 10px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .badge img {
-        width: 60px;
-    }
-    .badge span {
-        display: block;
-        margin-top: 5px;
-        font-size: 0.9em;
-    }
-    .leaderboard {
-        background: white;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .leaderboard table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .leaderboard th, .leaderboard td {
-        padding: 8px;
-        text-align: left;
-    }
-    .leaderboard tr:nth-child(even) {
-        background: #f9f9f9;
-    }
-    .lb-avatar {
-        border-radius: 50%;
-        width: 32px;
-        vertical-align: middle;
-        margin-right: 8px;
-    }
-    .chart-container {
-        background: white;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-    }
+    body {margin: 0;font-family: 'Poppins', sans-serif;display: flex;background: #f5f6fa;color: #333;}
+    .sidebar {width: 220px;background: #ff4da6;color: white;height: 100vh;display: flex;flex-direction: column;position: fixed;left: 0;top: 0;padding-top: 20px;}
+    .sidebar h2 {text-align: center;margin-bottom: 30px;}
+    .sidebar a {padding: 14px 20px;color: white;text-decoration: none;display: block;transition: background 0.3s;}
+    .sidebar a:hover, .sidebar a.active {background: rgba(255, 255, 255, 0.2);}
+    .main {margin-left: 220px;padding: 20px;flex: 1;}
+    h1 {margin-top: 0;}
+    .stats-grid {display: grid;grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));gap: 15px;margin-bottom: 30px;}
+    .card {background: white;border-radius: 10px;padding: 15px;text-align: center;box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .card img {width: 40px;margin-bottom: 10px;}
+    .card h3 {margin: 0;font-size: 1.4em;}
+    .card p {color: gray;margin: 5px 0 0;}
+    .badge-grid {display: grid;grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));gap: 15px;}
+    .badge {background: white;border-radius: 8px;padding: 10px;text-align: center;box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .badge img {width: 60px;}
+    .badge span {display: block;margin-top: 5px;font-size: 0.9em;}
+    .leaderboard {background: white;border-radius: 8px;padding: 15px;box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .leaderboard table {width: 100%;border-collapse: collapse;}
+    .leaderboard th, .leaderboard td {padding: 8px;text-align: left;}
+    .leaderboard tr:nth-child(even) {background: #f9f9f9;}
+    .lb-avatar {border-radius: 50%;width: 32px;vertical-align: middle;margin-right: 8px;}
+    .chart-container {background: white;border-radius: 8px;padding: 15px;box-shadow: 0 2px 8px rgba(0,0,0,0.05);margin-bottom: 20px;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -190,7 +96,7 @@ function logout() {
     window.location.href = "index.html";
 }
 
-// Handle OAuth redirect login
+// On OAuth login → redirect to servers.html
 (function () {
     const params = new URLSearchParams(window.location.search);
     const encodedData = params.get("data");
@@ -202,130 +108,74 @@ function logout() {
             localStorage.setItem("tokenType", decoded.tokenType);
             localStorage.setItem("currentUser", JSON.stringify(decoded.user));
             localStorage.setItem("mutualServers", JSON.stringify(decoded.servers));
-
-            // Force user to pick a server after login
             localStorage.removeItem("selectedGuild");
             window.location.href = "servers.html";
-            return; // Stop loading dashboard
         } catch (err) {
-            console.error("Invalid OAuth data:", err);
             alert("Login failed, please try again.");
             window.location.href = "index.html";
         }
     }
 })();
 
-// Token check
-const token = localStorage.getItem("accessToken");
-if (!token) {
-    alert("No access token found. Please log in again.");
-    window.location.href = "index.html";
-}
+// Load dashboard after guild is selected
+(function initDashboard() {
+    const token = localStorage.getItem("accessToken");
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+    const guild = JSON.parse(localStorage.getItem("selectedGuild") || "null");
 
-// Guild selection check
-const guild = JSON.parse(localStorage.getItem("selectedGuild"));
-if (!guild) {
-    window.location.href = "servers.html";
-} else {
+    if (!token || !currentUser) return window.location.href = "index.html";
+    if (!guild) return window.location.href = "servers.html";
+
     document.getElementById("guildName").textContent = guild.name;
+    loadStats(token, currentUser, guild);
+})();
+
+function loadStats(token, currentUser, guild) {
+    fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId=${guild.id}&userId=${currentUser.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("xp").textContent = data.xp || 0;
+        document.getElementById("vcTime").textContent = (data.vcTime || 0) + "h";
+        document.getElementById("level").textContent = data.level || 0;
+        document.getElementById("streak").textContent = data.streak || 0;
+        document.getElementById("coins").textContent = data.coins || 0;
+
+        const badgeGrid = document.getElementById("badgeGrid");
+        badgeGrid.innerHTML = "";
+        if (data.badges?.length) {
+            data.badges.forEach(b => {
+                badgeGrid.innerHTML += `<div class="badge"><img src="assets/badges/${b}.png"><span>${b}</span></div>`;
+            });
+        } else badgeGrid.textContent = "No badges earned yet.";
+
+        if (data.xpHistory && data.vcHistory) {
+            new Chart(document.getElementById("xpChart"), { type: 'line', data: { labels: Object.keys(data.xpHistory), datasets: [{ label: 'XP', data: Object.values(data.xpHistory), borderColor: '#ff4da6', fill: false }] } });
+            new Chart(document.getElementById("vcChart"), { type: 'line', data: { labels: Object.keys(data.vcHistory), datasets: [{ label: 'VC Hours', data: Object.values(data.vcHistory), borderColor: '#4da6ff', fill: false }] } });
+        }
+
+        loadLeaderboards(token, guild);
+    })
+    .catch(() => alert("Failed to load stats."));
 }
 
-// Check guild selection
-const guild = JSON.parse(localStorage.getItem("selectedGuild"));
-if (!guild) {
-    alert("Please select a server first.");
-    window.location.href = "servers.html";
-} else {
-    document.getElementById("guildName").textContent = guild.name;
-}
-
-// Check user
-const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-if (!currentUser) {
-    alert("No user info found. Please log in again.");
-    window.location.href = "index.html";
-}
-
-// Fetch stats
-fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId=${guild.id}&userId=${currentUser.id}`, {
-    headers: { Authorization: `Bearer ${token}` }
-})
-.then(res => res.json())
-.then(data => {
-    document.getElementById("xp").textContent = data.xp || 0;
-    document.getElementById("vcTime").textContent = (data.vcTime || 0) + "h";
-    document.getElementById("level").textContent = data.level || 0;
-    document.getElementById("streak").textContent = data.streak || 0;
-    document.getElementById("coins").textContent = data.coins || 0;
-
-    const badgeGrid = document.getElementById("badgeGrid");
-    badgeGrid.innerHTML = "";
-    if (data.badges && data.badges.length) {
-        data.badges.forEach(b => {
-            const div = document.createElement("div");
-            div.className = "badge";
-            div.innerHTML = `<img src="assets/badges/${b}.png"><span>${b}</span>`;
-            badgeGrid.appendChild(div);
+function loadLeaderboards(token, guild) {
+    const fillLB = (tableId, data) => {
+        const table = document.getElementById(tableId);
+        let pos = 1;
+        data.forEach(user => {
+            table.innerHTML += `<tr><td>${pos}</td><td><img src="${user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="lb-avatar">${user.username}</td><td>${user.value}</td></tr>`;
+            pos++;
         });
-    } else {
-        badgeGrid.textContent = "No badges earned yet.";
-    }
+    };
 
-    if (data.xpHistory && data.vcHistory) {
-        new Chart(document.getElementById("xpChart"), {
-            type: 'line',
-            data: {
-                labels: Object.keys(data.xpHistory),
-                datasets: [{
-                    label: 'XP',
-                    data: Object.values(data.xpHistory),
-                    borderColor: '#ff4da6',
-                    fill: false
-                }]
-            }
-        });
-        new Chart(document.getElementById("vcChart"), {
-            type: 'line',
-            data: {
-                labels: Object.keys(data.vcHistory),
-                datasets: [{
-                    label: 'VC Hours',
-                    data: Object.values(data.vcHistory),
-                    borderColor: '#4da6ff',
-                    fill: false
-                }]
-            }
-        });
-    }
-})
-.catch(err => console.error("Stats fetch error:", err));
+    fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=vc`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json()).then(vcLB => fillLB("vcLeaderboard", vcLB));
 
-function fillLB(tableId, data) {
-    const table = document.getElementById(tableId);
-    let pos = 1;
-    data.forEach(user => {
-        const row = document.createElement("tr");
-        row.innerHTML = `<td>${pos}</td>
-            <td><img src="${user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="lb-avatar">${user.username}</td>
-            <td>${user.value}</td>`;
-        table.appendChild(row);
-        pos++;
-    });
+    fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=msg`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json()).then(msgLB => fillLB("msgLeaderboard", msgLB));
 }
-
-fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=vc`, {
-    headers: { Authorization: `Bearer ${token}` }
-})
-.then(res => res.json())
-.then(vcLB => fillLB("vcLeaderboard", vcLB))
-.catch(err => console.error("VC leaderboard error:", err));
-
-fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=msg`, {
-    headers: { Authorization: `Bearer ${token}` }
-})
-.then(res => res.json())
-.then(msgLB => fillLB("msgLeaderboard", msgLB))
-.catch(err => console.error("Message leaderboard error:", err));
 </script>
 </body>
 </html>
