@@ -164,13 +164,11 @@
     initPetals();
   });
 
- // 🔑 Discord Login
+// 🔑 Discord Login via Vercel backend
 document.getElementById("discord-login").addEventListener("click", () => {
-  const clientId = "1390039097992810606";
-  const redirectUri = encodeURIComponent("https://brahma-tech.github.io/servers.html");
-  const scope = "identify guilds";
-  window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+  window.location.href = "https://brahmatech-backend.vercel.app/api/login";
 });
+
 </script>
 
 </body>
