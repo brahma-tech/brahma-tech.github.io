@@ -2,210 +2,178 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BrahmaTech Bot Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+<title>BrahmaTech Dashboard</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"></script>
 <style>
-  :root {
-    --main-color: #ff99bb;
-    --bg-color: #fff0f5;
-    --text-color: #333;
-    --card-bg: #ffffff;
-  }
   body {
-    font-family: 'Poppins', sans-serif;
-    background: var(--bg-color);
+    font-family: 'Segoe UI', sans-serif;
+    background: #fff0f5;
     margin: 0;
     padding: 0;
-    color: var(--text-color);
+    color: #333;
   }
   header {
-    background: var(--main-color);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #ffb6c1;
     color: white;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
   }
-  header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  header .user-info {
-    display: flex;
-    align-items: center;
-  }
-  header .user-info img {
-    width: 40px;
-    height: 40px;
+  header img {
     border-radius: 50%;
-    margin-left: 10px;
+    width: 50px;
+    height: 50px;
   }
   .container {
-    max-width: 1100px;
+    padding: 20px;
+    max-width: 900px;
     margin: auto;
-    padding: 2rem;
   }
-  h2 {
-    color: var(--main-color);
-    font-weight: 600;
-    margin-bottom: 1rem;
+  h1 {
+    text-align: center;
+    color: #ff4da6;
   }
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
   }
-  .card {
-    background: var(--card-bg);
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  .stat-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
     text-align: center;
-    transition: transform 0.2s;
-  }
-  .card:hover {
-    transform: translateY(-4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
   .stat-value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--main-color);
+    color: #ff4da6;
   }
-  .stat-label {
-    font-size: 0.9rem;
-    color: #555;
+  .badges {
+    margin-top: 30px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
   .badge-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 10px;
   }
   .badge {
-    background: #ffe4ef;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    color: #cc3366;
+    background: #ffccdd;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.9rem;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1 id="serverName">BrahmaTech Dashboard</h1>
-  <div class="user-info" id="userInfo">Loading...</div>
+  <img id="serverIcon" src="" alt="Server Icon">
+  <div>
+    <div id="serverName" style="font-size:1.2rem; font-weight:bold;"></div>
+    <div id="userName" style="font-size:0.9rem;"></div>
+  </div>
 </header>
 
 <div class="container">
-  <h2>Stats Overview</h2>
-  <div class="stats-grid" id="statsGrid">
-    <p>Loading stats...</p>
+  <h1>Your Stats</h1>
+  <div id="statsGrid" class="stats-grid">Loading stats...</div>
+
+  <div class="badges">
+    <h2>Badges</h2>
+    <div id="badgeList" class="badge-list"></div>
   </div>
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <script>
-  // Firebase config
+  // Firebase Config (replace with yours)
   const firebaseConfig = {
-    apiKey: "AIzaSyDknSfqRvswpAbwEmrwp8AHLWII9FMa1v0",
-    authDomain: "brahma-tech.firebaseapp.com",
-    projectId: "brahma-tech",
-    storageBucket: "brahma-tech.firebasestorage.app",
-    messagingSenderId: "374755840852",
-    appId: "1:374755840852:web:deb0527b454adeaf47eec1",
-    measurementId: "G-9JBZ8Y8VYX"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  const guildId = localStorage.getItem("selectedGuild");
+  const guildData = JSON.parse(localStorage.getItem("selectedGuild"));
   const token = localStorage.getItem("accessToken");
 
-  if (!guildId || !token) {
-    alert("No guild selected or token missing. Please login again.");
+  if (!guildData || !token) {
+    alert("No guild or token found. Please login again.");
     window.location.href = "login.html";
   }
 
-  // Fetch server name
-  fetch("https://discord.com/api/users/@me/guilds", {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  .then(res => res.json())
-  .then(guilds => {
-    const guild = guilds.find(g => g.id === guildId);
-    if (guild) {
-      document.getElementById("serverName").textContent = guild.name + " | Dashboard";
-    }
-  });
+  document.getElementById("serverName").innerText = guildData.name;
+  document.getElementById("serverIcon").src = guildData.icon 
+    ? `https://cdn.discordapp.com/icons/${guildData.id}/${guildData.icon}.png`
+    : "https://cdn.discordapp.com/embed/avatars/0.png";
 
-  // Fetch user info
+  // Get user info from Discord
   fetch("https://discord.com/api/users/@me", {
     headers: { Authorization: `Bearer ${token}` }
   })
   .then(res => res.json())
   .then(user => {
-    document.getElementById("userInfo").innerHTML = `
-      ${user.username}#${user.discriminator}
-      <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" alt="avatar">
-    `;
-    loadStats(user.id);
-  });
+    document.getElementById("userName").innerText = `${user.username}#${user.discriminator}`;
+    const userId = user.id;
 
-  function loadStats(userId) {
-    db.collection("users").doc(userId).get().then(doc => {
-      if (!doc.exists) {
-        document.getElementById("statsGrid").innerHTML = "<p>No user data found.</p>";
+    // Fetch stats from Firestore
+    const docId = `${guildData.id}_${userId}`;
+    db.collection("users").doc(docId).get().then(docSnap => {
+      if (!docSnap.exists) {
+        document.getElementById("statsGrid").innerHTML = "<p>No stats found.</p>";
         return;
       }
-      const data = doc.data();
-      
-      const badgeHTML = data.badges?.map(b => `<span class="badge">${b}</span>`).join("") || "No badges";
-      
-      document.getElementById("statsGrid").innerHTML = `
-        <div class="card">
-          <div class="stat-value">${data.level || 0}</div>
-          <div class="stat-label">Level</div>
-        </div>
-        <div class="card">
-          <div class="stat-value">${data.xp || 0}</div>
-          <div class="stat-label">XP</div>
-        </div>
-        <div class="card">
-          <div class="stat-value">${data.gems || 0}</div>
-          <div class="stat-label">Gems</div>
-        </div>
-        <div class="card">
-          <div class="stat-value">${data.coins || 0}</div>
-          <div class="stat-label">Coins</div>
-        </div>
-        <div class="card">
-          <div class="stat-value">${Math.round((data.vcTime || 0) / 3600)} hrs</div>
-          <div class="stat-label">Voice Chat Time</div>
-        </div>
-        <div class="card">
-          <div class="stat-value">${Math.round((data.study_hours || 0) / 60)} hrs</div>
-          <div class="stat-label">Study Hours</div>
-        </div>
-        <div class="card">
-          <div class="stat-value">${data.streak || 0}</div>
-          <div class="stat-label">Current Streak</div>
-        </div>
-        <div class="card">
-          <div class="stat-value">${data.warnings || 0}</div>
-          <div class="stat-label">Warnings</div>
-        </div>
-        <div class="card">
-          <div class="stat-label">Badges</div>
-          <div class="badge-list">${badgeHTML}</div>
-        </div>
-      `;
+      const data = docSnap.data();
+      renderStats(data);
     });
+  });
+
+  function renderStats(data) {
+    const stats = [
+      { label: "Level", value: data.level },
+      { label: "XP", value: data.xp },
+      { label: "Coins", value: data.coins },
+      { label: "Gems", value: data.gems },
+      { label: "VC Time (s)", value: data.vcTime },
+      { label: "Study Hours", value: data.study_hours },
+      { label: "Daily Msg Count", value: data.dailyMessageCount },
+      { label: "Streak", value: data.streak },
+      { label: "Warnings", value: data.warnings }
+    ];
+
+    const grid = document.getElementById("statsGrid");
+    grid.innerHTML = "";
+    stats.forEach(stat => {
+      const card = document.createElement("div");
+      card.className = "stat-card";
+      card.innerHTML = `
+        <div class="stat-value">${stat.value ?? 0}</div>
+        <div>${stat.label}</div>
+      `;
+      grid.appendChild(card);
+    });
+
+    // Render badges
+    const badgeList = document.getElementById("badgeList");
+    badgeList.innerHTML = "";
+    if (Array.isArray(data.badges)) {
+      data.badges.forEach(badge => {
+        const b = document.createElement("div");
+        b.className = "badge";
+        b.innerText = badge;
+        badgeList.appendChild(b);
+      });
+    }
   }
 </script>
 
