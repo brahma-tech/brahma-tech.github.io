@@ -55,56 +55,69 @@
 <div class="server-grid" id="serverGrid">Loading servers...</div>
 
 <script>
-  // Get token from URL hash
+(async () => {
+  // Get token from URL hash (OAuth)
   const params = new URLSearchParams(window.location.hash.substr(1));
   const token = params.get("access_token");
 
   if (!token) {
-    document.getElementById('serverGrid').innerHTML = "<p style='color:red'>No token found. Please log in again.</p>";
-  } else {
-    fetch("https://discord.com/api/users/@me/guilds", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then(res => res.json())
-    .then(guilds => {
-      // Filter: Only guilds where BrahmaTech Bot is also present
-      // In production, replace botGuildIds with a fetch from your bot API
-      const botGuildIds = ["1394299073305116805"]; // Example: BrahmaTech's guilds
-      const sharedGuilds = guilds.filter(g => botGuildIds.includes(g.id));
-
-      const grid = document.getElementById("serverGrid");
-      grid.innerHTML = "";
-
-      if (sharedGuilds.length === 0) {
-        grid.innerHTML = "<p style='color:gray'>You are not in any servers with BrahmaTech Bot.</p>";
-        return;
-      }
-
-      sharedGuilds.forEach(guild => {
-        const iconURL = guild.icon 
-          ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
-          : "https://cdn.discordapp.com/embed/avatars/0.png";
-
-        const card = document.createElement("div");
-        card.className = "server-card";
-        card.innerHTML = `
-          <img src="${iconURL}" alt="server icon">
-          <div class="server-name">${guild.name}</div>
-        `;
-        
-        card.onclick = () => {
-          localStorage.setItem("selectedGuild", JSON.stringify(guild));
-          localStorage.setItem("accessToken", token);
-          window.location.href = "dashboard.html";
-        };
-        
-        grid.appendChild(card);
-      });
-    })
-    .catch(() => {
-      document.getElementById('serverGrid').innerHTML = "<p style='color:red'>Failed to load servers.</p>";
-    });
+    document.getElementById('serverGrid').innerHTML =
+      "<p style='color:red'>No token found. Please log in again.</p>";
+    return;
   }
+
+  try {
+    // 1️⃣ Fetch user's guilds from Discord API
+    const userGuildsRes = await fetch("https://discord.com/api/users/@me/guilds", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const userGuilds = await userGuildsRes.json();
+
+    // 2️⃣ Fetch bot's guilds from your backend
+    const botGuildsRes = await fetch("http://localhost:3000/api/bot-guilds");
+    const botGuilds = await botGuildsRes.json();
+    const botGuildIds = botGuilds.map(g => g.id);
+
+    // 3️⃣ Filter: only servers where both are present
+    const sharedGuilds = userGuilds.filter(g => botGuildIds.includes(g.id));
+
+    const grid = document.getElementById("serverGrid");
+    grid.innerHTML = "";
+
+    if (sharedGuilds.length === 0) {
+      grid.innerHTML =
+        "<p style='color:gray'>You are not in any servers with BrahmaTech Bot.</p>";
+      return;
+    }
+
+    // 4️⃣ Display server cards
+    sharedGuilds.forEach(guild => {
+      const iconURL = guild.icon
+        ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
+        : "https://cdn.discordapp.com/embed/avatars/0.png";
+
+      const card = document.createElement("div");
+      card.className = "server-card";
+      card.innerHTML = `
+        <img src="${iconURL}" alt="server icon">
+        <div class="server-name">${guild.name}</div>
+      `;
+
+      // When user clicks a server
+      card.onclick = () => {
+        localStorage.setItem("selectedGuild", JSON.stringify(guild));
+        localStorage.setItem("accessToken", token);
+        window.location.href = "dashboard.html";
+      };
+
+      grid.appendChild(card);
+    });
+  } catch (err) {
+    console.error(err);
+    document.getElementById('serverGrid').innerHTML =
+      "<p style='color:red'>Failed to load servers.</p>";
+  }
+})();
 </script>
 
 </body>
