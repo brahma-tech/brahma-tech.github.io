@@ -2,50 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard | BrahmaTech Bot</title>
+<title>BrahmaTech Bot Dashboard</title>
 <style>
   body {
     background: #0d0d0d;
     color: white;
     font-family: 'Segoe UI', sans-serif;
     text-align: center;
-    padding-top: 100px;
+    padding-top: 50px;
   }
-  #login-btn {
-    background: #5865F2;
+  .avatar {
+    border-radius: 50%;
+  }
+  #logout-btn {
+    background: crimson;
     color: white;
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 10px 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
+    margin-top: 20px;
   }
 </style>
 </head>
 <body>
 
-<h1>Welcome to BrahmaTech Bot Dashboard</h1>
-<p>Please log in with Discord to continue</p>
-
-<button id="login-btn">Login with Discord</button>
+<div id="content">
+  <h1>Loading...</h1>
+</div>
 
 <script>
-const clientId = "1390039097992810606"; // Your bot's client ID
-const redirectUri = encodeURIComponent(window.location.href.split('#')[0]);
-const scope = "identify";
-
-// If logged in already
-const discordUser = JSON.parse(localStorage.getItem("discordUser"));
-if (discordUser) {
-  showDashboard(discordUser);
-}
-
-// Handle login button click
-document.getElementById("login-btn").addEventListener("click", () => {
-  window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}`;
-});
-
-// Handle OAuth redirect
+// Check OAuth token from URL or stored user
 if (window.location.hash.includes("access_token")) {
   const params = new URLSearchParams(window.location.hash.substring(1));
   fetch("https://discord.com/api/users/@me", {
@@ -54,22 +41,29 @@ if (window.location.hash.includes("access_token")) {
   .then(res => res.json())
   .then(user => {
     localStorage.setItem("discordUser", JSON.stringify(user));
-    showDashboard(user);
+    renderDashboard(user);
     window.history.replaceState({}, document.title, window.location.pathname);
   });
+} else {
+  const storedUser = localStorage.getItem("discordUser");
+  if (storedUser) {
+    renderDashboard(JSON.parse(storedUser));
+  } else {
+    window.location.href = "login.html"; // Not logged in
+  }
 }
 
-function showDashboard(user) {
-  document.body.innerHTML = `
+function renderDashboard(user) {
+  document.getElementById("content").innerHTML = `
     <h1>Welcome, ${user.username}#${user.discriminator}</h1>
-    <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" width="100" style="border-radius:50%"><br><br>
-    <button onclick="logout()">Logout</button>
+    <img class="avatar" src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" width="100"><br>
+    <button id="logout-btn">Logout</button>
   `;
-}
 
-function logout() {
-  localStorage.removeItem("discordUser");
-  location.reload();
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    localStorage.removeItem("discordUser");
+    window.location.href = "login.html";
+  });
 }
 </script>
 
