@@ -45,7 +45,7 @@
 <script>
   function login() {
     const clientId = "1390039097992810606"; // Your bot's client ID
-    const redirectUri = encodeURIComponent("https://discord.com/oauth2/authorize?client_id=1390039097992810606&response_type=code&redirect_uri=https%3A%2F%2Fbrahma-tech.github.io%2Fdashboard.html&scope=guilds+identify");
+    const redirectUri = encodeURIComponent("https://discord.com/oauth2/authorize?client_id=1390039097992810606&response_type=code&redirect_uri=https%3A%2F%2Fbrahma-tech.github.io%2Fservers.html&scope=guilds+identify");
     const scope = "identify guilds";
     window.location.href = 
       `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
