@@ -5,65 +5,138 @@
 <title>BrahmaTech Bot Dashboard</title>
 <style>
   body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
     background: #0d0d0d;
     color: white;
-    font-family: 'Segoe UI', sans-serif;
-    text-align: center;
-    padding-top: 50px;
+    display: flex;
   }
-  .avatar {
+  /* Sidebar */
+  .sidebar {
+    width: 230px;
+    background: #1a1a1a;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+  }
+  .sidebar h2 {
+    text-align: center;
+    color: #00ffe7;
+    margin-bottom: 20px;
+  }
+  .sidebar a {
+    padding: 12px 20px;
+    text-decoration: none;
+    color: white;
+    display: block;
+    transition: background 0.3s;
+  }
+  .sidebar a:hover {
+    background: #00ffe7;
+    color: black;
+  }
+  /* Main content */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Top bar */
+  .topbar {
+    background: #1a1a1a;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .topbar img {
     border-radius: 50%;
+    margin-left: 10px;
+  }
+  /* Content area */
+  .content {
+    padding: 20px;
   }
   #logout-btn {
     background: crimson;
-    color: white;
-    padding: 10px 16px;
     border: none;
+    padding: 8px 14px;
+    color: white;
     border-radius: 6px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-left: 20px;
   }
 </style>
 </head>
 <body>
 
-<div id="content">
-  <h1>Loading...</h1>
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2>BrahmaTech Bot</h2>
+  <a href="#" onclick="loadPage('home')">🏠 Home</a>
+  <a href="#" onclick="loadPage('moderation')">🛡️ Moderation</a>
+  <a href="#" onclick="loadPage('custom')">⚙️ Custom Commands</a>
+  <a href="#" onclick="loadPage('reviews')">⭐ Reviews</a>
+  <a href="#" onclick="loadPage('leveling')">📊 Leveling</a>
+  <a href="#" onclick="loadPage('settings')">🔧 Settings</a>
+  <a href="#" onclick="logout()">🚪 Logout</a>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar" id="topbar-user">
+    Loading user...
+  </div>
+
+  <!-- Dynamic content -->
+  <div class="content" id="content">
+    <h1>Welcome to your dashboard</h1>
+    <p>Select an option from the sidebar to manage your bot.</p>
+  </div>
 </div>
 
 <script>
-// Check OAuth token from URL or stored user
-if (window.location.hash.includes("access_token")) {
-  const params = new URLSearchParams(window.location.hash.substring(1));
-  fetch("https://discord.com/api/users/@me", {
-    headers: { Authorization: `Bearer ${params.get("access_token")}` }
-  })
-  .then(res => res.json())
-  .then(user => {
-    localStorage.setItem("discordUser", JSON.stringify(user));
-    renderDashboard(user);
-    window.history.replaceState({}, document.title, window.location.pathname);
-  });
+// Load Discord user from storage or redirect
+const storedUser = localStorage.getItem("discordUser");
+if (!storedUser) {
+  window.location.href = "login.html";
 } else {
-  const storedUser = localStorage.getItem("discordUser");
-  if (storedUser) {
-    renderDashboard(JSON.parse(storedUser));
-  } else {
-    window.location.href = "login.html"; // Not logged in
-  }
+  const user = JSON.parse(storedUser);
+  document.getElementById("topbar-user").innerHTML = `
+    ${user.username}#${user.discriminator}
+    <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" width="40">
+  `;
 }
 
-function renderDashboard(user) {
-  document.getElementById("content").innerHTML = `
-    <h1>Welcome, ${user.username}#${user.discriminator}</h1>
-    <img class="avatar" src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" width="100"><br>
-    <button id="logout-btn">Logout</button>
-  `;
+// Logout function
+function logout() {
+  localStorage.removeItem("discordUser");
+  window.location.href = "login.html";
+}
 
-  document.getElementById("logout-btn").addEventListener("click", () => {
-    localStorage.removeItem("discordUser");
-    window.location.href = "login.html";
-  });
+// Dynamic content loader
+function loadPage(page) {
+  const content = document.getElementById("content");
+  if (page === "home") {
+    content.innerHTML = `<h1>🏠 Home</h1><p>Welcome to your bot's control panel.</p>`;
+  }
+  if (page === "moderation") {
+    content.innerHTML = `<h1>🛡️ Moderation</h1><p>Here you can configure moderation settings.</p>`;
+  }
+  if (page === "custom") {
+    content.innerHTML = `<h1>⚙️ Custom Commands</h1><p>Manage your custom commands here.</p>`;
+  }
+  if (page === "reviews") {
+    content.innerHTML = `<h1>⭐ Reviews</h1><p>View and manage bot reviews here.</p>`;
+  }
+  if (page === "leveling") {
+    content.innerHTML = `<h1>📊 Leveling</h1><p>Adjust your leveling settings here.</p>`;
+  }
+  if (page === "settings") {
+    content.innerHTML = `<h1>🔧 Settings</h1><p>Manage your bot's settings here.</p>`;
+  }
 }
 </script>
 
