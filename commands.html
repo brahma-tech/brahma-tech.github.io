@@ -137,6 +137,19 @@
       display: none;
     }
 
+    .favorite-btn {
+      margin-left: 10px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 1em;
+      color: gold;
+    }
+
+    .favorite-btn.active {
+      color: orange;
+    }
+
     footer {
       padding: 40px 20px 20px;
       background: linear-gradient(to right, #ffd6ea, #ffc1e3);
@@ -160,6 +173,9 @@
 
 <section class="commands-section">
   <h1>Bot Commands</h1>
+  <div id="statsPanel" style="text-align:center; margin-bottom:20px; font-size:1.1em;">
+    <p>🛠 Total Commands: <span id="totalCommands">0</span> | ⭐ Favorites: <span id="favoriteCount">0</span> | ⏱ Last Updated: <span id="lastUpdated">-</span></p>
+  </div>
   <div class="search-box">
     <input type="text" id="commandSearch" placeholder="Search commands...">
   </div>
@@ -173,19 +189,20 @@
 <script>
   const container = document.getElementById("commandsContainer");
   const searchInput = document.getElementById("commandSearch");
+  let rawCommands = {};
 
-  let rawCommands = {}; // Loaded from JSON
-
-  // Load JSON
   fetch("commands.json")
     .then(res => res.json())
     .then(data => {
       rawCommands = data;
       renderCommands(data);
+      updateStats();
     });
 
   function renderCommands(data) {
     container.innerHTML = '';
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
     for (const category in data) {
       const accordion = document.createElement("button");
       accordion.className = "accordion";
@@ -203,9 +220,13 @@
         summary.textContent = `${cmd.name}`;
 
         const desc = document.createElement("div");
+        const isFav = favorites.includes(cmd.name);
         desc.innerHTML = `
           <p><strong>Description:</strong> ${cmd.description}</p>
-          <p><strong>Usage:</strong> <code>${cmd.usage}</code></p>
+          <p><strong>Usage:</strong> <code>${cmd.usage}</code>
+            <button onclick="copyToClipboard('${cmd.usage}')">📋 Copy</button>
+            <button class="favorite-btn${isFav ? ' active' : ''}" onclick="toggleFavorite('${cmd.name}')">⭐ Favorite</button>
+          </p>
         `;
 
         details.appendChild(summary);
@@ -230,7 +251,34 @@
     });
   }
 
-  // Filter commands
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Copied to clipboard: " + text);
+    }).catch(err => {
+      alert("Failed to copy: " + err);
+    });
+  }
+
+  function toggleFavorite(commandName) {
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    if (favorites.includes(commandName)) {
+      favorites = favorites.filter(fav => fav !== commandName);
+    } else {
+      favorites.push(commandName);
+    }
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    renderCommands(rawCommands);
+    updateStats();
+  }
+
+  function updateStats() {
+    const total = Object.values(rawCommands).flat().length;
+    const favs = JSON.parse(localStorage.getItem("favorites") || "[]").length;
+    document.getElementById("totalCommands").textContent = total;
+    document.getElementById("favoriteCount").textContent = favs;
+    document.getElementById("lastUpdated").textContent = new Date().toLocaleString();
+  }
+
   searchInput.addEventListener("input", () => {
     const filter = searchInput.value.toLowerCase();
     const filtered = {};
@@ -246,6 +294,14 @@
     }
 
     renderCommands(filtered);
+    updateStats();
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey && e.key === "k") || e.key === "/") {
+      e.preventDefault();
+      searchInput.focus();
+    }
   });
 </script>
 
