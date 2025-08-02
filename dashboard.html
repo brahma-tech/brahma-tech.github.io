@@ -209,87 +209,101 @@ function showSection(sectionId) {
     event.target.classList.add('active');
 }
 
-// Load guild info
+// === Auth & Guild Info ===
+const token = localStorage.getItem("accessToken");
+if (!token) {
+    alert("No access token found. Please log in again.");
+    window.location.href = "index.html";
+}
+
 const guild = JSON.parse(localStorage.getItem("selectedGuild"));
 document.getElementById("guildName").textContent = guild ? guild.name : "Unknown Server";
 
-// Fetch stats from backend (placeholder data for now)
-const stats = {
-    xp: 5000,
-    vcTime: 120,
-    level: 10,
-    streak: 45,
-    coins: 350
-};
-document.getElementById("xp").textContent = stats.xp;
-document.getElementById("vcTime").textContent = stats.vcTime + "h";
-document.getElementById("level").textContent = stats.level;
-document.getElementById("streak").textContent = stats.streak;
-document.getElementById("coins").textContent = stats.coins;
+// === Fetch Stats ===
+fetch(`https://brahmatech-backend.vercel.app/api/stats?guildId=${guild.id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+})
+.then(res => res.json())
+.then(data => {
+    // Fill stats
+    document.getElementById("xp").textContent = data.xp || 0;
+    document.getElementById("vcTime").textContent = (data.vcTime || 0) + "h";
+    document.getElementById("level").textContent = data.level || 0;
+    document.getElementById("streak").textContent = data.streak || 0;
+    document.getElementById("coins").textContent = data.coins || 0;
 
-// Badges (placeholder)
-const badges = [
-    { name: "Streak 50", img: "assets/badges/streak_50.png" },
-    { name: "VC Master", img: "assets/badges/vc_master.png" }
-];
-const badgeGrid = document.getElementById("badgeGrid");
-badgeGrid.innerHTML = "";
-badges.forEach(b => {
-    const div = document.createElement("div");
-    div.className = "badge";
-    div.innerHTML = `<img src="${b.img}" alt="${b.name}"><span>${b.name}</span>`;
-    badgeGrid.appendChild(div);
-});
-
-// Charts (placeholder)
-new Chart(document.getElementById("xpChart"), {
-    type: 'line',
-    data: {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-        datasets: [{
-            label: 'XP',
-            data: [500, 800, 1500, 2000],
-            borderColor: '#ff4da6',
-            fill: false
-        }]
+    // Fill badges
+    const badgeGrid = document.getElementById("badgeGrid");
+    badgeGrid.innerHTML = "";
+    if (data.badges && data.badges.length) {
+        data.badges.forEach(b => {
+            const div = document.createElement("div");
+            div.className = "badge";
+            div.innerHTML = `<img src="assets/badges/${b}.png"><span>${b}</span>`;
+            badgeGrid.appendChild(div);
+        });
+    } else {
+        badgeGrid.textContent = "No badges earned yet.";
     }
-});
-new Chart(document.getElementById("vcChart"), {
-    type: 'line',
-    data: {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-        datasets: [{
-            label: 'VC Hours',
-            data: [10, 15, 25, 30],
-            borderColor: '#4da6ff',
-            fill: false
-        }]
-    }
-});
 
-// Leaderboards (placeholder)
-const vcLB = [
-    { username: "Alice", id: "1", value: "120h" },
-    { username: "Bob", id: "2", value: "100h" }
-];
-const msgLB = [
-    { username: "Alice", id: "1", value: "500" },
-    { username: "Bob", id: "2", value: "450" }
-];
+    // Charts
+    if (data.xpHistory && data.vcHistory) {
+        new Chart(document.getElementById("xpChart"), {
+            type: 'line',
+            data: {
+                labels: data.xpHistory.labels,
+                datasets: [{
+                    label: 'XP',
+                    data: data.xpHistory.values,
+                    borderColor: '#ff4da6',
+                    fill: false
+                }]
+            }
+        });
+
+        new Chart(document.getElementById("vcChart"), {
+            type: 'line',
+            data: {
+                labels: data.vcHistory.labels,
+                datasets: [{
+                    label: 'VC Hours',
+                    data: data.vcHistory.values,
+                    borderColor: '#4da6ff',
+                    fill: false
+                }]
+            }
+        });
+    }
+})
+.catch(err => console.error("Stats fetch error:", err));
+
+// === Leaderboards ===
 function fillLB(tableId, data) {
     const table = document.getElementById(tableId);
     let pos = 1;
     data.forEach(user => {
         const row = document.createElement("tr");
         row.innerHTML = `<td>${pos}</td>
-            <td><img src="https://cdn.discordapp.com/embed/avatars/0.png" class="lb-avatar">${user.username}</td>
+            <td><img src="${user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="lb-avatar">${user.username}</td>
             <td>${user.value}</td>`;
         table.appendChild(row);
         pos++;
     });
 }
-fillLB("vcLeaderboard", vcLB);
-fillLB("msgLeaderboard", msgLB);
+
+fetch(`https://brahmatech-backend.vercel.app/api/leaderboard?type=vc&guildId=${guild.id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+})
+.then(res => res.json())
+.then(vcLB => fillLB("vcLeaderboard", vcLB))
+.catch(err => console.error("VC leaderboard error:", err));
+
+fetch(`https://brahmatech-backend.vercel.app/api/leaderboard?type=messages&guildId=${guild.id}`, {
+    headers: { Authorization: `Bearer ${token}` }
+})
+.then(res => res.json())
+.then(msgLB => fillLB("msgLeaderboard", msgLB))
+.catch(err => console.error("Message leaderboard error:", err));
 </script>
 
 </body>
