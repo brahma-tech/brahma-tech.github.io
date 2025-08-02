@@ -1,144 +1,145 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>BrahmaTech Bot Dashboard</title>
-<style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #0d0d0d;
-    color: white;
-    display: flex;
-  }
-  /* Sidebar */
-  .sidebar {
-    width: 230px;
-    background: #1a1a1a;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px;
-  }
-  .sidebar h2 {
-    text-align: center;
-    color: #00ffe7;
-    margin-bottom: 20px;
-  }
-  .sidebar a {
-    padding: 12px 20px;
-    text-decoration: none;
-    color: white;
-    display: block;
-    transition: background 0.3s;
-  }
-  .sidebar a:hover {
-    background: #00ffe7;
-    color: black;
-  }
-  /* Main content */
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  /* Top bar */
-  .topbar {
-    background: #1a1a1a;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-  .topbar img {
-    border-radius: 50%;
-    margin-left: 10px;
-  }
-  /* Content area */
-  .content {
-    padding: 20px;
-  }
-  #logout-btn {
-    background: crimson;
-    border: none;
-    padding: 8px 14px;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-left: 20px;
-  }
-</style>
+  <meta charset="utf-8">
+  <title>BrahmaTech Bot Dashboard</title>
+  <style>
+    body { background: #0d0d0d; color: white; font-family: sans-serif; margin: 0; }
+    header { background: #1a1a1a; padding: 1rem; text-align: center; }
+    header h1 { color: #00ffe7; }
+    #login-btn { background: #5865F2; padding: 0.8rem 1.5rem; border: none; color: white; border-radius: 8px; cursor: pointer; }
+    .container { max-width: 1000px; margin: auto; padding: 1rem; }
+    .guild-card { display: flex; align-items: center; gap: 1rem; background: #1e1e1e; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; margin-bottom: 0.5rem; }
+    .guild-card:hover { background: #2a2a2a; }
+    nav { display: flex; gap: 1rem; margin-bottom: 1rem; }
+    nav button { background: #222; border: none; color: white; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+    nav button.active { background: #00ffe7; color: black; }
+    label { display: block; margin: 0.5rem 0 0.2rem; }
+    input { width: 100%; padding: 0.5rem; border-radius: 8px; border: none; background: #222; color: white; }
+    button.save { margin-top: 1rem; background: #00ffe7; color: black; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+  </style>
 </head>
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar">
-  <h2>BrahmaTech Bot</h2>
-  <a href="#" onclick="loadPage('home')">🏠 Home</a>
-  <a href="#" onclick="loadPage('moderation')">🛡️ Moderation</a>
-  <a href="#" onclick="loadPage('custom')">⚙️ Custom Commands</a>
-  <a href="#" onclick="loadPage('reviews')">⭐ Reviews</a>
-  <a href="#" onclick="loadPage('leveling')">📊 Leveling</a>
-  <a href="#" onclick="loadPage('settings')">🔧 Settings</a>
-  <a href="#" onclick="logout()">🚪 Logout</a>
+<header>
+  <h1>⚙️ BrahmaTech Bot Dashboard</h1>
+  <button id="login-btn">Login with Discord</button>
+</header>
+
+<div class="container" id="content">
+  <!-- Dynamic Content Here -->
 </div>
 
-<!-- Main content -->
-<div class="main">
-  <!-- Topbar -->
-  <div class="topbar" id="topbar-user">
-    Loading user...
-  </div>
-
-  <!-- Dynamic content -->
-  <div class="content" id="content">
-    <h1>Welcome to your dashboard</h1>
-    <p>Select an option from the sidebar to manage your bot.</p>
-  </div>
-</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-// Load Discord user from storage or redirect
-const storedUser = localStorage.getItem("discordUser");
-if (!storedUser) {
-  window.location.href = "login.html";
-} else {
-  const user = JSON.parse(storedUser);
-  document.getElementById("topbar-user").innerHTML = `
-    ${user.username}#${user.discriminator}
-    <img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png" width="40">
-  `;
-}
+  // Firebase Init
+  const firebaseConfig = {
+    apiKey: "AIzaSyDknSfqRvswpAbwEmrwp8AHLWII9FMa1v0",
+    authDomain: "brahma-tech.firebaseapp.com",
+    projectId: "brahma-tech",
+    storageBucket: "brahma-tech.firebasestorage.app",
+    messagingSenderId: "374755840852",
+    appId: "1:374755840852:web:deb0527b454adeaf47eec1"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-// Logout function
-function logout() {
-  localStorage.removeItem("discordUser");
-  window.location.href = "login.html";
-}
+  let accessToken = null;
+  let selectedGuildId = null;
 
-// Dynamic content loader
-function loadPage(page) {
-  const content = document.getElementById("content");
-  if (page === "home") {
-    content.innerHTML = `<h1>🏠 Home</h1><p>Welcome to your bot's control panel.</p>`;
+  // Handle OAuth2 Redirect
+  const params = new URLSearchParams(window.location.hash.substring(1));
+  if (params.has("access_token")) {
+    accessToken = params.get("access_token");
+    document.getElementById("login-btn").style.display = "none";
+    loadGuildSelector();
   }
-  if (page === "moderation") {
-    content.innerHTML = `<h1>🛡️ Moderation</h1><p>Here you can configure moderation settings.</p>`;
+
+  document.getElementById("login-btn").addEventListener("click", () => {
+    const clientId = "1390039097992810606";
+    const redirectUri = encodeURIComponent(window.location.href.split('#')[0]);
+    const scope = "identify guilds";
+    const url = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=${scope}`;
+    window.location.href = url;
+  });
+
+  function loadGuildSelector() {
+    fetch("https://discord.com/api/users/@me/guilds", {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    .then(res => res.json())
+    .then(guilds => {
+      const content = document.getElementById("content");
+      content.innerHTML = `<h2>Select a Server</h2>`;
+      guilds.filter(g => (g.permissions & 0x20) === 0x20).forEach(guild => {
+        content.innerHTML += `
+          <div class="guild-card" data-id="${guild.id}">
+            <img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png" width="50" style="border-radius: 50%;">
+            <span>${guild.name}</span>
+          </div>
+        `;
+      });
+
+      document.querySelectorAll(".guild-card").forEach(card => {
+        card.addEventListener("click", () => {
+          selectedGuildId = card.getAttribute("data-id");
+          loadGuildDashboard();
+        });
+      });
+    });
   }
-  if (page === "custom") {
-    content.innerHTML = `<h1>⚙️ Custom Commands</h1><p>Manage your custom commands here.</p>`;
+
+  function loadGuildDashboard() {
+    const content = document.getElementById("content");
+    content.innerHTML = `
+      <h2>Server Dashboard</h2>
+      <nav>
+        <button onclick="loadLeveling()" class="active">📊 Leveling</button>
+        <button onclick="alert('Moderation Coming Soon')">🛡️ Moderation</button>
+        <button onclick="alert('Tickets Coming Soon')">🎟️ Tickets</button>
+      </nav>
+      <div id="module-content"></div>
+    `;
+    loadLeveling();
   }
-  if (page === "reviews") {
-    content.innerHTML = `<h1>⭐ Reviews</h1><p>View and manage bot reviews here.</p>`;
+
+  function loadLeveling() {
+    const module = document.getElementById("module-content");
+    module.innerHTML = `
+      <h3>📊 Leveling Settings</h3>
+      <label>XP Per Message:</label>
+      <input type="number" id="xpPerMessage" min="1">
+      <label>Level-Up Message:</label>
+      <input type="text" id="levelUpMessage">
+      <button class="save" onclick="saveLeveling()">💾 Save</button>
+      <p id="status"></p>
+    `;
+
+    db.collection("levelingConfig").doc(selectedGuildId).get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        document.getElementById("xpPerMessage").value = data.xpPerMessage || 10;
+        document.getElementById("levelUpMessage").value = data.levelUpMessage || "🎉 {user} reached level {level}!";
+      } else {
+        document.getElementById("xpPerMessage").value = 10;
+        document.getElementById("levelUpMessage").value = "🎉 {user} reached level {level}!";
+      }
+    });
   }
-  if (page === "leveling") {
-    content.innerHTML = `<h1>📊 Leveling</h1><p>Adjust your leveling settings here.</p>`;
+
+  function saveLeveling() {
+    const xp = parseInt(document.getElementById("xpPerMessage").value);
+    const msg = document.getElementById("levelUpMessage").value;
+
+    db.collection("levelingConfig").doc(selectedGuildId).set({
+      xpPerMessage: xp,
+      levelUpMessage: msg
+    }, { merge: true }).then(() => {
+      document.getElementById("status").innerText = "✅ Saved!";
+    });
   }
-  if (page === "settings") {
-    content.innerHTML = `<h1>🔧 Settings</h1><p>Manage your bot's settings here.</p>`;
-  }
-}
 </script>
-
 </body>
 </html>
