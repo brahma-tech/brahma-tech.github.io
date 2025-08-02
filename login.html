@@ -164,13 +164,13 @@
     initPetals();
   });
 
-  // 🔑 Discord Login
-  document.getElementById("discord-login").addEventListener("click", () => {
-    const clientId = "1390039097992810606";
-    const redirectUri = encodeURIComponent("https://brahma-tech.github.io/servers.html"); // After login
-    const scope = "identify guilds";
-    window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
-  });
+ // 🔑 Discord Login
+document.getElementById("discord-login").addEventListener("click", () => {
+  const clientId = "1390039097992810606";
+  const redirectUri = encodeURIComponent("https://brahma-tech.github.io/servers.html");
+  const scope = "identify guilds";
+  window.location.href = `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+});
 </script>
 
 </body>
