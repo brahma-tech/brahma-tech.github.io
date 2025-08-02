@@ -13,8 +13,6 @@
         background: #f5f6fa;
         color: #333;
     }
-
-    /* Sidebar */
     .sidebar {
         width: 220px;
         background: #ff4da6;
@@ -41,8 +39,6 @@
     .sidebar a:hover, .sidebar a.active {
         background: rgba(255, 255, 255, 0.2);
     }
-
-    /* Main content */
     .main {
         margin-left: 220px;
         padding: 20px;
@@ -51,8 +47,6 @@
     h1 {
         margin-top: 0;
     }
-
-    /* Stats Cards */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -78,8 +72,6 @@
         color: gray;
         margin: 5px 0 0;
     }
-
-    /* Badges */
     .badge-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -100,8 +92,6 @@
         margin-top: 5px;
         font-size: 0.9em;
     }
-
-    /* Leaderboards */
     .leaderboard {
         background: white;
         border-radius: 8px;
@@ -125,8 +115,6 @@
         vertical-align: middle;
         margin-right: 8px;
     }
-
-    /* Charts */
     .chart-container {
         background: white;
         border-radius: 8px;
@@ -147,6 +135,7 @@
     <a href="#" onclick="showSection('charts')">📈 Charts</a>
     <a href="#" onclick="showSection('leaderboards')">🏆 Leaderboards</a>
     <a href="servers.html">⬅ Back</a>
+    <a href="#" onclick="logout()">🚪 Logout</a>
 </div>
 
 <!-- Main content -->
@@ -200,7 +189,7 @@
         </div>
     </div>
 </div>
-    
+
 <script>
 function showSection(sectionId) {
     document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
@@ -208,6 +197,33 @@ function showSection(sectionId) {
     document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
     event.target.classList.add('active');
 }
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "index.html";
+}
+
+// === Handle OAuth Redirect ===
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    const encodedData = params.get("data");
+
+    if (encodedData) {
+        try {
+            const decoded = JSON.parse(atob(encodedData));
+            localStorage.setItem("accessToken", decoded.token);
+            localStorage.setItem("tokenType", decoded.tokenType);
+            localStorage.setItem("currentUser", JSON.stringify(decoded.user));
+            localStorage.setItem("mutualServers", JSON.stringify(decoded.servers));
+            console.log("Stored OAuth login data:", decoded);
+            window.history.replaceState({}, document.title, "dashboard.html");
+        } catch (err) {
+            console.error("Invalid OAuth data:", err);
+            alert("Login failed, please try again.");
+            window.location.href = "index.html";
+        }
+    }
+})();
 
 // === Auth & Guild Info ===
 const token = localStorage.getItem("accessToken");
@@ -219,8 +235,6 @@ if (!token) {
 const guild = JSON.parse(localStorage.getItem("selectedGuild"));
 document.getElementById("guildName").textContent = guild ? guild.name : "Unknown Server";
 
-// === Current logged in user ===
-// You should store this in localStorage when logging in with Discord OAuth
 const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 if (!currentUser) {
     alert("No user info found. Please log in again.");
@@ -233,14 +247,12 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId
 })
 .then(res => res.json())
 .then(data => {
-    // Fill stats
     document.getElementById("xp").textContent = data.xp || 0;
     document.getElementById("vcTime").textContent = (data.vcTime || 0) + "h";
     document.getElementById("level").textContent = data.level || 0;
     document.getElementById("streak").textContent = data.streak || 0;
     document.getElementById("coins").textContent = data.coins || 0;
 
-    // Fill badges
     const badgeGrid = document.getElementById("badgeGrid");
     badgeGrid.innerHTML = "";
     if (data.badges && data.badges.length) {
@@ -254,7 +266,6 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId
         badgeGrid.textContent = "No badges earned yet.";
     }
 
-    // Charts
     if (data.xpHistory && data.vcHistory) {
         new Chart(document.getElementById("xpChart"), {
             type: 'line',
@@ -268,7 +279,6 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId
                 }]
             }
         });
-
         new Chart(document.getElementById("vcChart"), {
             type: 'line',
             data: {
@@ -285,7 +295,6 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?action=user-stats&guildId
 })
 .catch(err => console.error("Stats fetch error:", err));
 
-// === Leaderboards ===
 function fillLB(tableId, data) {
     const table = document.getElementById(tableId);
     let pos = 1;
@@ -299,7 +308,6 @@ function fillLB(tableId, data) {
     });
 }
 
-// VC Leaderboard
 fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=vc`, {
     headers: { Authorization: `Bearer ${token}` }
 })
@@ -307,7 +315,6 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildI
 .then(vcLB => fillLB("vcLeaderboard", vcLB))
 .catch(err => console.error("VC leaderboard error:", err));
 
-// Message Leaderboard
 fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildId=${guild.id}&type=msg`, {
     headers: { Authorization: `Bearer ${token}` }
 })
@@ -315,6 +322,5 @@ fetch(`https://brahmatech-backend.vercel.app/api/stats?action=leaderboard&guildI
 .then(msgLB => fillLB("msgLeaderboard", msgLB))
 .catch(err => console.error("Message leaderboard error:", err));
 </script>
-
 </body>
 </html>
