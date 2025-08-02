@@ -160,6 +160,9 @@
 
 <section class="commands-section">
   <h1>Bot Commands</h1>
+  <div id="statsPanel" style="text-align:center; margin-bottom:20px; font-size:1.1em;">
+    <p>🛠 Total Commands: <span id="totalCommands">0</span> | ⏱ Last Updated: <span id="lastUpdated">-</span></p>
+  </div>
   <div class="search-box">
     <input type="text" id="commandSearch" placeholder="Search commands...">
   </div>
@@ -180,6 +183,7 @@
     .then(data => {
       rawCommands = data;
       renderCommands(data);
+      updateStats();
     });
 
   function renderCommands(data) {
@@ -215,6 +219,7 @@
     }
 
     initAccordions();
+    updateStats();
   }
 
   function initAccordions() {
@@ -243,6 +248,19 @@
     }
 
     renderCommands(filtered);
+  });
+
+  function updateStats() {
+    const total = Object.values(rawCommands).flat().length;
+    document.getElementById("totalCommands").textContent = total;
+    document.getElementById("lastUpdated").textContent = new Date().toLocaleString();
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey && e.key === "k") || e.key === "/") {
+      e.preventDefault();
+      searchInput.focus();
+    }
   });
 </script>
 
