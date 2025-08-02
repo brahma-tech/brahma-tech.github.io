@@ -55,12 +55,15 @@
 <div class="server-grid" id="serverGrid">Loading servers...</div>
 
 <script>
+// Always clear selectedGuild so we can't skip selection
+localStorage.removeItem("selectedGuild");
+
 (function handleOAuthRedirect() {
   const params = new URLSearchParams(window.location.search);
   const encodedData = params.get("data");
 
   if (!encodedData) {
-    // If no OAuth data found, but already logged in, load from localStorage
+    // No OAuth redirect data — check existing session
     const mutualServers = JSON.parse(localStorage.getItem("mutualServers") || "[]");
     if (mutualServers.length) {
       displayServers(mutualServers);
@@ -83,7 +86,7 @@
     // Show server selection
     displayServers(decoded.servers);
 
-    // Remove ?data=... from URL
+    // Remove ?data=... from URL for cleaner reloads
     window.history.replaceState({}, document.title, "servers.html");
   } catch (err) {
     console.error("Error parsing OAuth data:", err);
