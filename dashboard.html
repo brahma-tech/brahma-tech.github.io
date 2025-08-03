@@ -32,22 +32,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<!-- Sidebar -->
 <div class="sidebar">
     <h2>Dashboard :</h2>
-    <a href="#" class="active" onclick="showSection('stats')">📊 Stats</a>
-    <a href="#" onclick="showSection('badges')">🏅 Badges</a>
-    <a href="#" onclick="showSection('charts')">📈 Charts</a>
-    <a href="#" onclick="showSection('leaderboards')">🏆 Leaderboards</a>
+    <a href="#" class="active" onclick="showSection('stats', event)">📊 Stats</a>
+    <a href="#" onclick="showSection('badges', event)">🏅 Badges</a>
+    <a href="#" onclick="showSection('charts', event)">📈 Charts</a>
+    <a href="#" onclick="showSection('leaderboards', event)">🏆 Leaderboards</a>
     <a href="servers.html">⬅ Back</a>
     <a href="#" onclick="logout()">🚪 Logout</a>
 </div>
 
-<!-- Main content -->
 <div class="main">
     <h1 id="guildName">Loading...</h1>
 
-    <!-- Stats Section -->
     <div id="stats" class="section">
         <div class="stats-grid">
             <div class="card"><img src="assets/icons/xp.png"><h3 id="xp">0</h3><p>XP</p></div>
@@ -58,18 +55,15 @@
         </div>
     </div>
 
-    <!-- Badges Section -->
     <div id="badges" class="section" style="display:none;">
         <div class="badge-grid" id="badgeGrid">Loading badges...</div>
     </div>
 
-    <!-- Charts Section -->
     <div id="charts" class="section" style="display:none;">
         <div class="chart-container"><h3>XP Growth</h3><canvas id="xpChart"></canvas></div>
         <div class="chart-container"><h3>VC Time Growth</h3><canvas id="vcChart"></canvas></div>
     </div>
 
-    <!-- Leaderboards Section -->
     <div id="leaderboards" class="section" style="display:none;">
         <div class="leaderboard">
             <h3>VC Leaderboard</h3>
@@ -84,11 +78,12 @@
 </div>
 
 <script>
-function showSection(sectionId) {
+function showSection(sectionId, e) {
+    e.preventDefault();
     document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
     document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-    event.target.classList.add('active');
+    e.target.classList.add('active');
 }
 
 function logout() {
@@ -96,11 +91,10 @@ function logout() {
     window.location.href = "index.html";
 }
 
-// On OAuth login → redirect to servers.html
+// Handle OAuth login redirect
 (function () {
     const params = new URLSearchParams(window.location.search);
     const encodedData = params.get("data");
-
     if (encodedData) {
         try {
             const decoded = JSON.parse(atob(encodedData));
@@ -110,22 +104,20 @@ function logout() {
             localStorage.setItem("mutualServers", JSON.stringify(decoded.servers));
             localStorage.removeItem("selectedGuild");
             window.location.href = "servers.html";
-        } catch (err) {
+        } catch {
             alert("Login failed, please try again.");
             window.location.href = "index.html";
         }
     }
 })();
 
-// Load dashboard after guild is selected
+// Load dashboard
 (function initDashboard() {
     const token = localStorage.getItem("accessToken");
     const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
     const guild = JSON.parse(localStorage.getItem("selectedGuild") || "null");
-
     if (!token || !currentUser) return window.location.href = "index.html";
     if (!guild) return window.location.href = "servers.html";
-
     document.getElementById("guildName").textContent = guild.name;
     loadStats(token, currentUser, guild);
 })();
@@ -150,9 +142,17 @@ function loadStats(token, currentUser, guild) {
             });
         } else badgeGrid.textContent = "No badges earned yet.";
 
-        if (data.xpHistory && data.vcHistory) {
-            new Chart(document.getElementById("xpChart"), { type: 'line', data: { labels: Object.keys(data.xpHistory), datasets: [{ label: 'XP', data: Object.values(data.xpHistory), borderColor: '#ff4da6', fill: false }] } });
-            new Chart(document.getElementById("vcChart"), { type: 'line', data: { labels: Object.keys(data.vcHistory), datasets: [{ label: 'VC Hours', data: Object.values(data.vcHistory), borderColor: '#4da6ff', fill: false }] } });
+        if (data.xpHistory && Object.keys(data.xpHistory).length) {
+            new Chart(document.getElementById("xpChart"), {
+                type: 'line',
+                data: { labels: Object.keys(data.xpHistory), datasets: [{ label: 'XP', data: Object.values(data.xpHistory), borderColor: '#ff4da6', fill: false }] }
+            });
+        }
+        if (data.vcHistory && Object.keys(data.vcHistory).length) {
+            new Chart(document.getElementById("vcChart"), {
+                type: 'line',
+                data: { labels: Object.keys(data.vcHistory), datasets: [{ label: 'VC Hours', data: Object.values(data.vcHistory), borderColor: '#4da6ff', fill: false }] }
+            });
         }
 
         loadLeaderboards(token, guild);
@@ -163,10 +163,13 @@ function loadStats(token, currentUser, guild) {
 function loadLeaderboards(token, guild) {
     const fillLB = (tableId, data) => {
         const table = document.getElementById(tableId);
-        let pos = 1;
-        data.forEach(user => {
-            table.innerHTML += `<tr><td>${pos}</td><td><img src="${user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="lb-avatar">${user.username}</td><td>${user.value}</td></tr>`;
-            pos++;
+        table.innerHTML = "<tr><th>#</th><th>User</th><th>Value</th></tr>";
+        data.forEach((user, i) => {
+            table.innerHTML += `<tr>
+                <td>${i + 1}</td>
+                <td><img src="${user.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" class="lb-avatar">${user.username}</td>
+                <td>${user.value}</td>
+            </tr>`;
         });
     };
 
