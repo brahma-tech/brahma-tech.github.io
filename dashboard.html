@@ -142,12 +142,28 @@ function loadStats(token, currentUser, guild) {
             });
         } else badgeGrid.textContent = "No badges earned yet.";
 
-        if (data.xpHistory && Object.keys(data.xpHistory).length) {
-            new Chart(document.getElementById("xpChart"), {
-                type: 'line',
-                data: { labels: Object.keys(data.xpHistory), datasets: [{ label: 'XP', data: Object.values(data.xpHistory), borderColor: '#ff4da6', fill: false }] }
-            });
-        }
+        const xpLabels = Object.keys(data.xpHistory || {});
+const xpValues = Object.values(data.xpHistory || {});
+
+// If xpHistory is empty, fallback to showing current XP as one point
+if (xpLabels.length === 0) {
+    xpLabels.push("Now");
+    xpValues.push(data.xp || 0);
+}
+
+new Chart(document.getElementById("xpChart"), {
+    type: 'line',
+    data: {
+        labels: xpLabels,
+        datasets: [{
+            label: 'XP',
+            data: xpValues,
+            borderColor: '#ff4da6',
+            fill: false
+        }]
+    }
+});
+
         if (data.vcHistory && Object.keys(data.vcHistory).length) {
             new Chart(document.getElementById("vcChart"), {
                 type: 'line',
