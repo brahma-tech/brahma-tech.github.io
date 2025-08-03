@@ -142,34 +142,29 @@ function loadStats(token, currentUser, guild) {
             });
         } else badgeGrid.textContent = "No badges earned yet.";
 
+        // XP Chart fallback
         const xpLabels = Object.keys(data.xpHistory || {});
-const xpValues = Object.values(data.xpHistory || {});
-
-// If xpHistory is empty, fallback to showing current XP as one point
-if (xpLabels.length === 0) {
-    xpLabels.push("Now");
-    xpValues.push(data.xp || 0);
-}
-
-new Chart(document.getElementById("xpChart"), {
-    type: 'line',
-    data: {
-        labels: xpLabels,
-        datasets: [{
-            label: 'XP',
-            data: xpValues,
-            borderColor: '#ff4da6',
-            fill: false
-        }]
-    }
-});
-
-        if (data.vcHistory && Object.keys(data.vcHistory).length) {
-            new Chart(document.getElementById("vcChart"), {
-                type: 'line',
-                data: { labels: Object.keys(data.vcHistory), datasets: [{ label: 'VC Hours', data: Object.values(data.vcHistory), borderColor: '#4da6ff', fill: false }] }
-            });
+        const xpValues = Object.values(data.xpHistory || {});
+        if (xpLabels.length === 0) {
+            xpLabels.push("Now");
+            xpValues.push(data.xp || 0);
         }
+        new Chart(document.getElementById("xpChart"), {
+            type: 'line',
+            data: { labels: xpLabels, datasets: [{ label: 'XP', data: xpValues, borderColor: '#ff4da6', fill: false }] }
+        });
+
+        // VC Chart fallback
+        const vcLabels = Object.keys(data.vcHistory || {});
+        const vcValues = Object.values(data.vcHistory || {});
+        if (vcLabels.length === 0) {
+            vcLabels.push("Now");
+            vcValues.push(data.vcTime || 0);
+        }
+        new Chart(document.getElementById("vcChart"), {
+            type: 'line',
+            data: { labels: vcLabels, datasets: [{ label: 'VC Hours', data: vcValues, borderColor: '#4da6ff', fill: false }] }
+        });
 
         loadLeaderboards(token, guild);
     })
